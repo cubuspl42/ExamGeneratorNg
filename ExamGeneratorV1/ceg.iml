@@ -8,10 +8,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:2.0.0-RC2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:2.0.0-RC2" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="Maven: org.fxmisc.richtext:richtextfx:0.6.10" level="project" />
     <orderEntry type="library" name="Maven: org.fxmisc.flowless:flowless:0.4.5" level="project" />
@@ -19,6 +17,7 @@
     <orderEntry type="library" name="Maven: org.reactfx:reactfx:2.0-M4u1" level="project" />
     <orderEntry type="library" name="Maven: org.fxmisc.undo:undofx:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.fxmisc.wellbehaved:wellbehavedfx:0.1.1" level="project" />
-    <orderEntry type="library" name="org.apache.pdfbox:pdfbox:2.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:2.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:2.0.4" level="project" />
   </component>
 </module>
