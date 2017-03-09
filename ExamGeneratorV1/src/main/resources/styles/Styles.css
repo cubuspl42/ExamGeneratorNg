@@ -1,0 +1,141 @@
+.button {
+    -fx-font-weight: normal;
+}
+
+.testButton{
+    -fx-background-color: orange;
+}
+
+.hiddenButton{
+    -fx-background-color: royalblue;
+}
+
+.gapsButton{
+    -fx-background-color: forestgreen;
+}
+
+.boldButton{
+    -fx-font-family: Arial;
+    -fx-font-weight: bolder; 
+}
+
+.italicButton{
+    -fx-font-family: Arial;
+    -fx-font-style: italic;
+    -fx-font-weight: normal;
+}
+
+.underlineButton{
+    -fx-font-family: Arial;
+    -fx-underline: true;
+    -fx-font-weight: normal;
+}
+
+.typewriterButton{
+    -fx-font-family: monospace;
+}
+
+.test {   
+    -fx-fill: orange;
+    -fx-font-weight: bold;
+}
+
+.hidden {
+    -fx-fill: royalblue;
+    -fx-font-weight: bold;
+}
+
+.normal {
+    -fx-fill: black;
+}
+
+.gap {
+    -fx-fill:forestgreen;
+    -fx-font-weight: bold;
+}
+
+.bold {
+    -fx-font-style: normal;
+    -fx-font-weight: bold;
+    -fx-underline: false;
+}
+
+.italic {
+    -fx-font-weight: normal;
+    -fx-font-style: italic;
+    -fx-underline: false;
+}
+
+.underline {
+    -fx-font-weight: normal;
+    -fx-font-style: normal;
+    -fx-underline: true;
+}
+
+.bolditalic {
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-underline: false;
+}
+
+.boldunderline {
+    -fx-font-weight: bold;
+    -fx-font-style: normal;
+    -fx-underline: true;
+}
+
+.italicunderline {
+    -fx-font-weight: normal;
+    -fx-font-style: italic;
+    -fx-underline: true;
+}
+
+.bolditalicunderline {
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-underline: true;
+}
+
+.monospace {
+    -fx-font-family: monospace;
+}
+
+.monospacebold {
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+}
+
+.monospaceitalic {
+    -fx-font-family: monospace;
+    -fx-font-style: italic;
+}
+
+.monospaceunderline {
+    -fx-font-family: monospace;
+        -fx-underline: true;
+} 
+
+.monospacebolditalic {
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+}
+
+.monospaceboldunderline {
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-underline: true;
+}
+
+.monospacebolditalicunderline {
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+    -fx-underline: true;
+}
+
+.undo {
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-underline: false;
+}

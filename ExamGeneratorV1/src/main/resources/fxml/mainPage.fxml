@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import org.fxmisc.richtext.*?>
+
+<GridPane alignment="center" hgap="10" prefHeight="619.0" prefWidth="987.0" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ceg.gui.GUIMainController">
+    <columnConstraints>
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+      <RowConstraints />
+    </rowConstraints>
+    <children>
+        <BorderPane fx:id="borderPane" prefHeight="551.0" prefWidth="1000.0" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <center>
+             <VBox prefHeight="292.0" spacing="10.0" BorderPane.alignment="CENTER_RIGHT">
+                 <children>
+                     <CodeArea fx:id="code" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="420.0" BorderPane.alignment="TOP_RIGHT">
+                         <BorderPane.margin>
+                         </BorderPane.margin>
+                     </CodeArea>
+                     <HBox alignment="BOTTOM_CENTER" spacing="10.0">
+                         <children>
+                             <Button mnemonicParsing="false" onAction="#hideMarker" styleClass="hiddenButton" text="Ukryj">
+                           <tooltip>
+                              <Tooltip text="Ukrywa kod w PDF" />
+                           </tooltip></Button>
+                             <Button mnemonicParsing="false" onAction="#testMarker" styleClass="testButton" text="Usuń">
+                           <tooltip>
+                              <Tooltip text="Usuwa kod z PDF i standardowej kompilacji" />
+                           </tooltip></Button>
+                             <Button mnemonicParsing="false" onAction="#normalMarker" text="Cofnij">
+                           <tooltip>
+                              <Tooltip text="Usuwa markery" />
+                           </tooltip></Button>
+                             <Button fx:id="gapsMarkerBtn" mnemonicParsing="false" onAction="#gapsMarker" styleClass="gapsButton" text="Luka" visible="false">
+                                <tooltip>
+                                 <Tooltip text="Zamienia zaznaczony kod na lukę do uzupełnienia" />
+                               </tooltip>
+                             </Button>
+                         </children>
+                     </HBox>
+                 </children>
+             </VBox>
+         </center>
+         <left>
+            <VBox prefHeight="531.0" prefWidth="450.0" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>    
+                  <StyleClassedTextArea fx:id="text" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="450.0" prefHeight="141.0" prefWidth="510.0" />
+                  <HBox fx:id="textOptions" prefHeight="25.0" prefWidth="510.0" spacing="5.0">
+                     <children>
+                        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#undoTextMarker" prefHeight="23.0" text="Cofnij format">
+                           <HBox.margin>
+                              <Insets bottom="10.0" />
+                           </HBox.margin></Button>
+                        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#boldTextMarker" styleClass="boldButton" text="B">
+                           <tooltip>
+                              <Tooltip text="Pogrubienie" />
+                           </tooltip></Button>
+                        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#underlineTextMarker" styleClass="underlineButton" text="U">
+                           <tooltip>
+                              <Tooltip text="Podkreślenie" />
+                           </tooltip></Button>
+                        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#italicTextMarker" styleClass="italicButton" text="I">
+                           <tooltip>
+                              <Tooltip text="Kursywa" />
+                           </tooltip></Button>
+                        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#monospaceTextMarker" styleClass="typewriterButton" text="A">
+                           <tooltip>
+                              <Tooltip text="Maszynowo" />
+                           </tooltip></Button>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  
+                  <StyleClassedTextArea fx:id="answer" editable="true" prefHeight="161.0" prefWidth="510.0" />
+                  <HBox alignment="CENTER" prefHeight="25.0" prefWidth="510.0" spacing="10.0">
+                     <children>
+                        <Button fx:id="labelBtn" mnemonicParsing="false" onAction="#changeToLabel" prefWidth="120.0" text="Etykieta">
+                           <tooltip>
+                              <Tooltip text="Zamienia zaznaczony tekst w etykietę" />
+                           </tooltip></Button>
+                        <Button fx:id="answerBtn" mnemonicParsing="false" onAction="#changeToAnswer" prefWidth="120.0" text="Odpowiedź">
+                           <tooltip>
+                              <Tooltip text="Zamienia zaznaczony tekst w odpowiedź" />
+                           </tooltip></Button>
+                        <CheckBox fx:id="rememberCheckBox" mnemonicParsing="false" text="Zapamiętaj odpowiedzi">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Wyłącza automatyczne generowanie odpowiedzi" />
+                           </tooltip></CheckBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <TextArea fx:id="result" editable="false" prefHeight="161.0" prefWidth="510.0" />
+                  <HBox alignment="CENTER" prefHeight="25.0" prefWidth="510.0" spacing="20.0">
+                     <children>
+                        <Button fx:id="executeBtn" mnemonicParsing="false" onAction="#execute" text="Wykonaj">
+                           <tooltip>
+                              <Tooltip text="Uwzględnia marker 'Usuń'" />
+                           </tooltip></Button>
+                        <Button fx:id="testExecuteBtn" alignment="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#testExecute" text="Wykonaj testowo">
+                           <tooltip>
+                              <Tooltip text="Nie uwzględnia markera 'Usuń'" />
+                           </tooltip></Button>
+                     </children>
+                  </HBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets left="20.0" right="20.0" />
+               </BorderPane.margin>
+            </VBox>
+         </left>
+         </BorderPane>
+      <VBox prefHeight="58.0" prefWidth="950.0">
+         <children>
+            <MenuBar fx:id="menu" prefHeight="29.0" prefWidth="979.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="Arkusz">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#createPDF" text="Generuj PDF" />
+                    <MenuItem fx:id="openPdfItem" disable="true"  mnemonicParsing="false" onAction="#openPDF" text="Otwórz ostatni PDF" />
+                    <MenuItem fx:id="saveExamItem" mnemonicParsing="false" onAction="#saveExam" text="Zapisz arkusz" />
+                    <MenuItem fx:id="saveExamAsItem" mnemonicParsing="false" onAction="#saveExamAs" text="Zapisz arkusz jako..."/>
+                    <MenuItem mnemonicParsing="false" onAction="#loadExam" text="Wczytaj arkusz" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Zadanie">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#addTask" text="Dodaj" />
+                      <MenuItem fx:id="taskEdition" mnemonicParsing="false" onAction="#editTask" text="Edytuj" visible="false" />
+                    <MenuItem fx:id="deleteTaskItem" mnemonicParsing="false" onAction="#deleteTask" text="Usuń" />
+                    <MenuItem fx:id="changeNameItem" mnemonicParsing="false" onAction="#changeTaskName" text="Zmień nazwę" />
+                    <MenuItem fx:id="saveTaskItem" mnemonicParsing="false" onAction="#saveTask" text="Zapisz zadanie" visible="false" />
+                    <MenuItem fx:id="saveTaskAsItem" mnemonicParsing="false" onAction="#saveTaskAs" text="Zapisz zadanie jako..." visible="false"/>
+                    <MenuItem mnemonicParsing="false" onAction="#loadTask" text="Wczytaj zadanie" visible="true" />
+                    <MenuItem fx:id="pdfContentWidth" mnemonicParsing="false" onAction="#changePdfContentWidth" text="Zmień szerokość w dokumencie" visible="false" />
+                    <CheckMenuItem fx:id="lineNumbersCheckBox" mnemonicParsing="false" text="Dodaj numerowanie linii" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false">
+                    <graphic>
+                        <Label mnemonicParsing="false" onMouseClicked="#advancedOptionsClicked" text="Ustawienia">
+                           <tooltip>
+                              <Tooltip text="Wyświetla okno opcji zaawansowanych" />
+                           </tooltip></Label>
+                    </graphic>
+                </Menu>
+                  <Menu mnemonicParsing="false">
+                     <graphic>
+                        <Label mnemonicParsing="false" onMouseClicked="#helpClicked" text="Pomoc">
+                           <tooltip>
+                              <Tooltip text="Wyświetla poradnik użytkownika" />
+                           </tooltip>
+                        </Label>
+                     </graphic>
+                  </Menu>
+              </menus>
+            </MenuBar>
+            <TabPane fx:id="tabPane" prefHeight="35.0" prefWidth="950.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+              </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+    </children>
+</GridPane>

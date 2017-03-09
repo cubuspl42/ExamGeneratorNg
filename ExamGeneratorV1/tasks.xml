@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tasks>
+    <task-data>
+        <name>Simple output</name>
+        <text>Podaj co pojawi się na wyjściu w wyniku wykonania podanego programu.</text>
+    </task-data>
+    <task-data>
+        <name>Returned value</name>
+        <text>Jaka wartość zostanie zwrócona przez poniższe wywołania funkcji:</text>
+    </task-data>
+    <task-data>
+        <name>Complex output</name>
+        <text>Podaj jaki tekst zostanie wypisany na ekran w wyniku wywołania funkcji:</text>
+    </task-data>
+    <task-data>
+        <name>Gaps</name>
+        <text>Uzupełnij pola, aby program się kompilował.</text>
+    </task-data>
+    <task-data>
+        <name>Var value</name>
+        <text>Podaj wartości podanych zmiennych tuż po zakończeniu realizacji funkcji:</text>
+    </task-data>
+    <task-data>
+        <name>Line numbers</name>
+        <text>Podaj numery linii, które powodują błąd kompilacji programu.</text>
+    </task-data>
+    <task-data>
+        <name>Own type</name>
+        <text></text>
+    </task-data>
+</tasks>

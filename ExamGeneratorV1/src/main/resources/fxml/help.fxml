@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="598.0" prefWidth="784.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ceg.gui.HelpController">
+   <children>
+      <TabPane layoutX="-2.0" layoutY="-4.0" prefHeight="602.0" prefWidth="794.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Okno główne">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="569.0" prefWidth="801.0">
+                     <children>
+                        <ImageView fitHeight="408.0" fitWidth="570.0" layoutX="89.0" layoutY="14.0">
+                           <image>
+                              <Image url="@../help/mainWindow.JPG" />
+                           </image>
+                        </ImageView>
+                        <Text fill="#69158a" layoutX="35.0" layoutY="441.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="35.0" layoutY="461.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="35.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="3">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="35.0" layoutY="501.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="35.0" layoutY="521.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="372.0" layoutY="441.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="372.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="7">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="372.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text="8">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="372.0" layoutY="501.0" strokeType="OUTSIDE" strokeWidth="0.0" text="9">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#69158a" layoutX="372.0" layoutY="521.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="53.0" layoutY="441.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - pole z tekstem polecenia" />
+                        <Text layoutX="53.0" layoutY="461.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - przyciski formatowania polecenia" />
+                        <Text layoutX="54.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - pole z odpowiedziami do zadania" />
+                        <Text layoutX="53.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - przyciski do oznaczania etykiet i odpowiedzi" />
+                        <Text layoutX="54.0" layoutY="521.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - pole z wyjściem programu dołączonego do zadania" wrappingWidth="308.80126953125" />
+                        <Text layoutX="397.0" layoutY="441.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - przyciski do kompilacji i wykonania kodu " />
+                        <Text layoutX="397.0" layoutY="459.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - pole z kodem dołączonym do zadania" />
+                        <Text layoutX="397.0" layoutY="480.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - markery kodu" />
+                        <Text layoutX="397.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - zakładki z zadaniami należącymi do egzaminu" />
+                        <Text layoutX="397.0" layoutY="520.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" - pasek głównego menu" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Typy zadań">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Accordion layoutX="5.0" layoutY="4.0" prefHeight="567.0" prefWidth="784.0">
+                          <panes>
+                              <TitledPane animated="false" text="Wyjście programu">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <Text layoutX="14.0" layoutY="44.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="W tym typie zadania wszystko, co pojawi się na wyjściu programu jest traktowane jako jedna odpowiedź." textAlignment="JUSTIFY" wrappingWidth="135.966796875">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="357.0" fitWidth="567.0" layoutX="169.0" layoutY="17.0">
+                                             <image>
+                                                <Image url="@../help/1pdf.JPG" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Wyjście funkcji">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <Text layoutX="593.0" layoutY="92.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="W tym typie zadania poszczególne wywołania funkcji printf / cout są rozdzielane znakami nowej linii. Każda linia wyjścia jest traktowana jako osobna odpowiedź w egzaminie." textAlignment="JUSTIFY" wrappingWidth="142.42578125">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="235.0" fitWidth="524.0" layoutX="29.0" layoutY="78.0">
+                                             <image>
+                                                <Image url="@../help/3pdf.JPG" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </TitledPane>
+                              <TitledPane animated="false" text="Wartość zmiennej">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <Text layoutX="32.0" layoutY="62.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="W kodzie dołączonym do zadania tego typu należy umieścić przynajmniej jedno wypisanie wartości zmiennej. Każda linia wyjścia będzie traktowana jako osobna odpowiedź (tak jak dla typu „Wyjście funkcji”)." textAlignment="JUSTIFY" wrappingWidth="143.322265625">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="301.0" fitWidth="558.0" layoutX="189.0" layoutY="37.0">
+                                             <image>
+                                                <Image url="@../help/5pdf.JPG" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </TitledPane>
+                            <TitledPane animated="false" text="Zwrócona wartość">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <Text layoutX="65.0" layoutY="56.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="W kodzie dołączonym do zadania tego typu należy umieścić wypisanie wartości zwróconej przez funkcję. Każda linia wyjścia będzie traktowana jako osobna odpowiedź (tak jak dla typu „Wyjście funkcji”). " textAlignment="JUSTIFY" wrappingWidth="495.384765625">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="138.0" fitWidth="613.0" layoutX="65.0" layoutY="152.0">
+                                             <image>
+                                                <Image url="@../help/2pdf.JPG" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="Numery linii">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <Text layoutX="21.0" layoutY="53.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kod dołączony do zadania tego typu powinien powodować błędy kompilacji. Odpowiedziami do tego zadania są numery linii powodujących błędy kompilacji. UWAGA: należy zawsze upewnić się, że wygenerowane odpowiedzi są poprawne." textAlignment="JUSTIFY" wrappingWidth="161.818359375">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                          <ImageView fitHeight="273.0" fitWidth="550.0" layoutX="196.0" layoutY="39.0">
+                                             <image>
+                                                <Image url="@../help/6pdf.JPG" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="Uzupełnianie luk">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <ImageView fitHeight="287.0" fitWidth="508.0" layoutX="251.0" layoutY="45.0">
+                                             <image>
+                                                <Image url="@../help/4pdf.JPG" />
+                                             </image>
+                                          </ImageView>
+                                          <Text layoutX="14.0" layoutY="59.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dla tego typu zadania dostępny jest dodatkowy marker. Zaznaczone fragmenty kodu będą stanowiły odpowiedzi do zadania." textAlignment="JUSTIFY" wrappingWidth="237.201171875">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                              <TitledPane animated="false" layoutX="10.0" layoutY="135.0" text="Typ własny">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <Text layoutX="36.0" layoutY="81.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dla tego typu zadania nie są generowane odpowiedzi, nie ma też domyślnego polecenia. Liczba i treść odpowiedzi jest definiowana przez użytkownika - zawsze zaznaczona jest opcja &quot;Zapamiętaj odpowiedzi&quot;." textAlignment="JUSTIFY" wrappingWidth="451.318359375">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </TitledPane>
+                          </panes>
+                        </Accordion>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Markery">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Text layoutX="45.0" layoutY="321.0" strokeType="OUTSIDE" strokeWidth="0.0" text="„Ukryty” kod nie pojawi się w arkuszu PDF, natomiast zostanie skompilowany zarówno dla wykonania zwykłego, jak i testowego.." textAlignment="JUSTIFY" wrappingWidth="338.46484375">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="415.0" layoutY="321.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Przycisk „Cofnij” powoduje wyczyszczenie markerów dla zaznaczonego fragmentu kodu." textAlignment="JUSTIFY" wrappingWidth="267.40625">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="419.0" layoutY="416.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dla typu „Uzupełnianie luk” dostępny jest dodatkowy marker „Luka” (patrz: Typy zadań). " textAlignment="JUSTIFY" wrappingWidth="280.787109375">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="46.0" layoutY="416.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="„Usunięty” kod nie pojawi się w arkuszu PDF i nie zostanie skompilowany podczas zwykłego wykonania. Zostanie skompilowany w przypadku wykonania testowego." textAlignment="JUSTIFY" wrappingWidth="336.404296875">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="46.0" layoutY="253.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dla wszystkich typów zadań dostępne są dwa markery: „Usuń” i „Ukryj”. " textAlignment="JUSTIFY" wrappingWidth="234.13671875">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="100.0" fitWidth="352.0" layoutX="207.0" layoutY="70.0">
+                           <image>
+                              <Image url="@../help/markery.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Tworzenie zadania">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Text layoutX="86.0" layoutY="57.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wybierz w menu okna głównego opcję Zadanie &gt; Dodaj. Zostanie otwarte okno dodawania zadania. Z rozwijanej listy wybierz typ zadania. W oknie po prawej stronie pojawi się domyślne polecenie dla danego typu. Po kliknięciu przycisku „Wczytaj kod” możesz wybrać plik znajdujący się na dysku, z którego chcesz wczytać kod do zadania. Po kliknięciu przycisku „Zakończ” okno dodawania zadania zostanie zamknięte, a utworzone zadanie zostanie dodane do aktualnie otwartego egzaminu." textAlignment="JUSTIFY" wrappingWidth="595.025390625">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="361.0" fitWidth="437.0" layoutX="158.0" layoutY="176.0">
+                           <image>
+                              <Image url="@../help/addTask.JPG" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Wykonanie">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Text layoutX="107.0" layoutY="389.0" lineSpacing="3.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Po kliknięciu przycisku „Wykonaj” nastąpi kompilacja kodu z wykluczeniem kodu „usuniętego” za pomocą pomarańczowego markera. Przycisk „Wykonaj testowo” uruchamia kompilację całego kodu. " textAlignment="JUSTIFY" wrappingWidth="580.646484375">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="181.0" fitWidth="500.0" layoutX="134.0" layoutY="95.0">
+                           <image>
+                              <Image url="@../help/output.png" />
+                           </image>
+                        </ImageView>
+                        <Text layoutX="108.0" layoutY="442.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="W polu nad przyciskami pojawi się wyjście skompilowanego programu lub informacja o ewentualnych błędach kompilacji czy wykonania." textAlignment="JUSTIFY" wrappingWidth="551.8173828125">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Generowanie PDF">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Text layoutX="60.0" layoutY="40.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Po wybraniu w menu opcji Egzamin &gt; Generuj PDF w nowo otwartym oknie mozna ustawić datę, która pojawi się na arkuszu, i typ arkusza (dla nauczyciela lub dla studenta). Więcej opcji znajduje się w oknie opcji zaawansowanych." wrappingWidth="603.0859375">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="60.0" layoutY="273.0" lineSpacing="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Po wybraniu miejsca zapisu nastąpi kompilacja programów dołączonych do wszystkich zadań w egzaminie. Następnie rozpocznie się generacja arkusza PDF." wrappingWidth="501.697265625">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="196.0" fitWidth="335.0" layoutX="232.0" layoutY="321.0">
+                           <image>
+                              <Image url="@../help/trwaKompilacja.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="129.0" fitWidth="303.0" layoutX="248.0" layoutY="98.0">
+                           <image>
+                              <Image url="@../help/savePdfwindow.JPG" />
+                           </image>
+                        </ImageView>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+          <Tab text="Opcje zaawansowane">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="317.0" fitWidth="515.0" layoutX="140.0" layoutY="28.0">
+                           <image>
+                              <Image url="@../help/zaawansowane.JPG" />
+                           </image>
+                        </ImageView>
+                        <Text layoutX="57.0" layoutY="379.0" strokeType="OUTSIDE" strokeWidth="0.0" text="W tym oknie można zmienić zaawansowane ustawienia programu." wrappingWidth="418.482421875">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="57.0" layoutY="408.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wygląd PDF - w tej zakładce dostępna jest zmiana czcionek dla kodu, polecenia i odpowiedzi.">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="57.0" layoutY="437.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dodatkowe opcje PDF - w tej zakładce można dodać tytuł i komentarz do egzaminu, oraz włączyć drukowanie w arkuszu PDF poziomych linii pomiędzy zadaniami za pomocą opcji &quot;Dodaj separatory po każdym zadaniu&quot;." textAlignment="JUSTIFY" wrappingWidth="687.04296875">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="57.0" layoutY="484.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Czas wykonania - ta zakładka pozwala na zmianę limitu czasu wykonania kodu dołączonego do zadania za pomocą suwaka." wrappingWidth="680.9697265625">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="57.0" layoutY="529.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Polecenia domyślne - tutaj można edytować domyślne polecenia dla poszczególnych typów zadań.">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Text>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
