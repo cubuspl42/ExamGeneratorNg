@@ -19,20 +19,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 
-class Placeholders {
-    private static final String CODE = "" +
-            "void param( l_t p0, l_t *p1, l_t **p2, l_t p3[] )\n" +
-            "{\n" +
-            "    p0.x = 3;\n" +
-            "    (*p1).x = 2;\n" +
-            "    p1++;\n" +
-            "    p2++;\n" +
-            "    p3->x = 4;\n" +
-            "}";
-
-    private static final int CODE_PLACEHOLDER_PREFIX_LENGTH = "#00".length();
-
-    private static final Pattern CODE_PLACEHOLDER_PATTERN = Pattern.compile("#(\\d\\d)(-)+(\\\\)+");
+class PlaceholderUtils {
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("([#!?])(\\d\\d)(/\\d\\d)?(-)*(\\\\)*");
 
     private static List<Node> combineNodesWithChar(OdfContentDom contentDom, List<Node> nodes, Character character) {
         Node last = nodes.isEmpty() ? null : nodes.get(nodes.size() - 1);
@@ -80,10 +68,10 @@ class Placeholders {
         return paragraph;
     }
 
-    static List<CodePlaceholder> findPlaceholders(Node node) {
+    static List<Placeholder> findPlaceholders(Node node) {
         Node firstChild = node.getFirstChild();
         String textContent = node.getTextContent();
-        Matcher matcher = CODE_PLACEHOLDER_PATTERN.matcher(textContent);
+        Matcher matcher = PLACEHOLDER_PATTERN.matcher(textContent);
 
         if (matcher.matches()
                 && node instanceof TableTableCellElement
@@ -93,10 +81,21 @@ class Placeholders {
             TextPElement firstParagraph = (TextPElement) firstChild;
             String firstParagraphStyleName = firstParagraph.getStyleName();
 
-            int id = parseInt(matcher.group(1));
-            int width = calculatePlaceholderWidth(matcher);
-            int height = calculatePlaceholderHeight(matcher);
-            CodePlaceholder placeholder = new CodePlaceholder(wrapperCell, firstParagraphStyleName, id, width, height);
+            String kindStr = matcher.group(1);
+            String indexStr = matcher.group(2);
+            String lineIndexStr = matcher.group(3);
+            String minusesStr = matcher.group(4);
+            String slashesStr = matcher.group(5);
+
+            PlaceholderKind kind = charToPlaceholderKind(kindStr);
+            int index = parseInt(indexStr);
+            int lineIndex = lineIndexStr != null ? parseInt(lineIndexStr.substring(1)) : 0;
+            int width = indexStr.length() + (lineIndexStr != null ? lineIndexStr.length() : 0) + minusesStr.length();
+            int height = 1 + (slashesStr != null ? slashesStr.length() : 0);
+
+            Placeholder placeholder = new Placeholder(
+                    wrapperCell, firstParagraphStyleName, kind, index, lineIndex, width, height);
+
             return ImmutableList.of(placeholder);
         }
 
@@ -105,25 +104,47 @@ class Placeholders {
                 .collect(Collectors.toList());
     }
 
-    private static int calculatePlaceholderWidth(Matcher matcher) {
-        return CODE_PLACEHOLDER_PREFIX_LENGTH + matcher.group(2).length();
+    private static PlaceholderKind charToPlaceholderKind(String kindStr) {
+        char c = kindStr.charAt(0);
+        switch (c) {
+            case '#':
+                return PlaceholderKind.CODE;
+            case '!':
+                return PlaceholderKind.OUTPUT;
+            case '?':
+                return PlaceholderKind.SECRET_OUTPUT;
+        }
+        throw new IllegalArgumentException(kindStr);
     }
 
-    private static int calculatePlaceholderHeight(Matcher matcher) {
-        return 1 + matcher.group(3).length();
-    }
-
-    private static void fillPlaceholder(OdfContentDom contentDom, CodePlaceholder placeholder) {
+    private static void fillPlaceholderWithContent(OdfContentDom contentDom, Placeholder placeholder, String content) {
         TableTableCellElement wrapperCell = placeholder.getWrapperCell();
-        String styleName = placeholder.getFirstParagraphStyleName();
+        String styleName = placeholder.getStyleName();
 
         DomUtils.removeAllChildren(wrapperCell);
 
-        OdfTextParagraph codeParagraph = stringToParagraph(CODE, contentDom, styleName);
+        OdfTextParagraph codeParagraph = stringToParagraph(content, contentDom, styleName);
         wrapperCell.appendChild(codeParagraph);
     }
 
-    static void fillPlaceholders(OdfContentDom contentDom, List<CodePlaceholder> placeholders) {
-        placeholders.forEach(placeholder -> fillPlaceholder(contentDom, placeholder));
+    private static void fillExamPlaceholder(OdfContentDom contentDom, Placeholder placeholder, Exam exam) {
+        ExamProgram program = exam.getPrograms().get(placeholder.getIndex() - 1);
+        String content = extractContent(placeholder, program);
+        fillPlaceholderWithContent(contentDom, placeholder, content);
+    }
+
+    private static String extractContent(Placeholder placeholder, ExamProgram program) {
+        switch (placeholder.getKind()) {
+            case CODE:
+                return program.getSource();
+            case OUTPUT:
+            case SECRET_OUTPUT:
+                return program.getOutput().get(placeholder.getLineIndex() - 1);
+        }
+        throw new AssertionError();
+    }
+
+    static void fillExamPlaceholders(OdfContentDom contentDom, List<Placeholder> placeholders, Exam exam) {
+        placeholders.forEach(placeholder -> fillExamPlaceholder(contentDom, placeholder, exam));
     }
 }
