@@ -20,4 +20,8 @@ public class DomUtils {
         while (node.hasChildNodes())
             node.removeChild(node.getFirstChild());
     }
+
+    public static void appendChildren(Node parent, List<Node> children) {
+        children.forEach(parent::appendChild);
+    }
 }

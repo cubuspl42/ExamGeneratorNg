@@ -37,7 +37,7 @@ public class Main {
         OdfTextDocument odt = (OdfTextDocument) OdfDocument.loadDocument(documentPath);
         OdfContentDom contentDom = odt.getContentDom();
 
-        List<Placeholder> placeholders = PlaceholderUtils.findPlaceholders(contentDom.getRootElement());
+        List<Placeholder> placeholders = ExamTemplateLoading.findPlaceholders(contentDom.getRootElement());
 
         ExamProgram program = ExamProgram.builder()
                 .source(CODE)
@@ -48,7 +48,7 @@ public class Main {
                 .programs(ImmutableList.of(program, program, program))
                 .build();
 
-        PlaceholderUtils.fillExamPlaceholders(contentDom, placeholders, exam);
+        ExamTemplateFilling.fillPlaceholders(contentDom, placeholders, exam);
 
         odt.save(new File(outputPath));
     }
