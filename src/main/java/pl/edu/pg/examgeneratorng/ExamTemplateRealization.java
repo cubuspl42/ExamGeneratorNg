@@ -9,20 +9,23 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import pl.edu.pg.examgeneratorng.util.DomUtils;
 import pl.edu.pg.examgeneratorng.util.ListUtils;
+import pl.edu.pg.examgeneratorng.util.StringUtils;
 
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
 import static pl.edu.pg.examgeneratorng.util.DomUtils.appendChildren;
 
-final class ExamTemplateFilling {
-    static void fillPlaceholders(OdfContentDom contentDom, List<Placeholder> placeholders, Exam exam) {
-        placeholders.forEach(placeholder -> fillPlaceholder(contentDom, placeholder, exam));
+final class ExamTemplateRealization {
+    static void fillPlaceholders(
+            OdfContentDom contentDom, List<Placeholder> placeholders, Exam exam, ExamVariant variant) {
+        placeholders.forEach(placeholder -> fillPlaceholder(contentDom, placeholder, exam, variant));
     }
 
-    private static void fillPlaceholder(OdfContentDom contentDom, Placeholder placeholder, Exam exam) {
+    private static void fillPlaceholder(
+            OdfContentDom contentDom, Placeholder placeholder, Exam exam, ExamVariant variant) {
         ExamProgram program = exam.getPrograms().get(placeholder.getIndex() - 1);
-        String content = extractContentForPlaceholder(program, placeholder);
+        String content = extractContentForPlaceholder(program, placeholder, variant);
         fillPlaceholderWithContent(contentDom, placeholder, content);
     }
 
@@ -78,14 +81,24 @@ final class ExamTemplateFilling {
         return nodes;
     }
 
-    private static String extractContentForPlaceholder(ExamProgram program, Placeholder placeholder) {
+    private static String extractContentForPlaceholder(
+            ExamProgram program, Placeholder placeholder, ExamVariant variant) {
         switch (placeholder.getKind()) {
             case CODE:
                 return program.getSource();
             case OUTPUT:
+                return extractContentForOutputPlaceholder(program, placeholder);
             case SECRET_OUTPUT:
-                return program.getOutput().get(placeholder.getLineIndex() - 1);
+                if (variant == ExamVariant.STUDENT) {
+                    return StringUtils.nCopiesOfChar(placeholder.getWidth(), '_');
+                } else if (variant == ExamVariant.TEACHER) {
+                    return extractContentForOutputPlaceholder(program, placeholder);
+                }
         }
         throw new AssertionError();
+    }
+
+    private static String extractContentForOutputPlaceholder(ExamProgram program, Placeholder placeholder) {
+        return program.getOutput().getLines().get(placeholder.getLineIndex() - 1);
     }
 }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import static java.lang.Integer.parseInt;
 
 final class ExamTemplateLoading {
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("([#!?])(\\d\\d)(/\\d\\d)?(-)*(\\\\)*");
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("([#!?])(\\d\\d)(/\\d\\d)?(-*)(\\\\)*");
 
     static List<Placeholder> findPlaceholders(Node node) {
         Node firstChild = node.getFirstChild();
