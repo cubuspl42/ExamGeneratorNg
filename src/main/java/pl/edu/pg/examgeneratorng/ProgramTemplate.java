@@ -1,31 +1,25 @@
 package pl.edu.pg.examgeneratorng;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Value;
 
 import java.util.List;
-import java.util.Set;
 
 @Value
 class ProgramTemplate {
-    static abstract class Marker {
-    }
-
-    static class PrologMarker extends Marker {
-    }
-
-    @Getter
-    @AllArgsConstructor
-    static class GroupMarker extends Marker {
-        private Group group;
+    interface Node {
     }
 
     @Value
-    static class Line {
-        private String content;
-        private Set<Marker> markers;
+    static class LineNode implements Node {
+        private LineTemplate lineTemplate;
     }
 
-    private List<Line> lines;
+    @Value
+    static class PergroupNode implements Node {
+        private List<LineTemplate> lineTemplates;
+    }
+
+    private List<String> prologueLines;
+
+    private List<? extends Node> nodes;
 }
