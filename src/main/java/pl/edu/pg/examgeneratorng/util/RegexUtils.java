@@ -18,4 +18,9 @@ public final class RegexUtils {
 
         return result;
     }
+
+    public static String removeFirst(String str, Pattern pattern) {
+        Matcher m = pattern.matcher(str);
+        return m.replaceFirst("");
+    }
 }

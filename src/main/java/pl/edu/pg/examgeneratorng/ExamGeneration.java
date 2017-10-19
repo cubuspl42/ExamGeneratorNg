@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 import static pl.edu.pg.examgeneratorng.util.CxxUtils.runCxxProgram;
 import static pl.edu.pg.examgeneratorng.ExamTemplateLoading.findPlaceholders;
 import static pl.edu.pg.examgeneratorng.ExamTemplateRealization.fillPlaceholders;
-import static pl.edu.pg.examgeneratorng.ProgramTemplateLoading.loadProgramTemplate;
+import static pl.edu.pg.examgeneratorng.ProgramTemplateParsing.loadProgramTemplate;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.*;
 
