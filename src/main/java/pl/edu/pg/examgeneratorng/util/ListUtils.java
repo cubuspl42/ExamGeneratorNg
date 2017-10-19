@@ -14,6 +14,10 @@ public class ListUtils {
                 .collect(Collectors.toList());
     }
 
+    public static <T> List<T> concat(List<T> list0, List<T> list1, List<T> list2) {
+        return concat(list0, concat(list1, list2));
+    }
+
     public static <T> List<T> emptyMutableList() {
         @SuppressWarnings("unchecked")
         List<T> result = (List<T>) new ArrayList();
