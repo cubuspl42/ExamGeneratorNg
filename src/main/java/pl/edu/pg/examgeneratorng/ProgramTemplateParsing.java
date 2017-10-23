@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pl.edu.pg.examgeneratorng.LineTemplateParsing.parseLineTemplate;
 import static pl.edu.pg.examgeneratorng.util.FileUtils.readWholeFile;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.splitByNewline;
 
@@ -17,10 +16,10 @@ final class ProgramTemplateParsing {
     static ProgramTemplate parseProgramTemplate(String programTemplateStr) {
         List<String> lines = splitByNewline(programTemplateStr);
 
-        List<ProgramTemplate.LineNode> nodes = lines.stream()
-                .map(lineStr -> new ProgramTemplate.LineNode(parseLineTemplate(lineStr)))
+        List<LineTemplate> lineTemplates = lines.stream()
+                .map(LineTemplateParsing::parseLineTemplate)
                 .collect(Collectors.toList());
 
-        return new ProgramTemplate(nodes);
+        return new ProgramTemplate(lineTemplates);
     }
 }

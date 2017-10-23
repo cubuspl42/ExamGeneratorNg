@@ -19,22 +19,14 @@ public class ProgramTemplateParsingTest {
 
         ProgramTemplate expected = new ProgramTemplate(
                 ImmutableList.of(
-                        lineNode("#include <iostream>"),
-                        lineNode("int main() {"),
-                        lineNode("    std::cout << 1 << std::endl;"),
-                        lineNode("}")
+                        LineTemplateUtils.lineTemplate("#include <iostream>"),
+                        LineTemplateUtils.lineTemplate("int main() {"),
+                        LineTemplateUtils.lineTemplate("    std::cout << 1 << std::endl;"),
+                        LineTemplateUtils.lineTemplate("}")
                 )
         );
 
         assertEquals(expected, actual);
     }
 
-    private ProgramTemplate.LineNode lineNode(String textContent) {
-        return new ProgramTemplate.LineNode(
-                new LineTemplate(
-                        ImmutableList.of(new LineTemplate.TextNode(textContent)),
-                        LineTemplate.LineKind.NORMAL
-                )
-        );
-    }
 }
