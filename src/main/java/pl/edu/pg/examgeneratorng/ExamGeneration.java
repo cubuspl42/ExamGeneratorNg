@@ -46,7 +46,7 @@ final class ExamGeneration {
         OdfContentDom contentDom = examTemplate.getContentDom();
         List<Placeholder> placeholders = findPlaceholders(contentDom.getRootElement());
         fillPlaceholders(contentDom, placeholders, exam, variant);
-        examTemplate.save(workspacePath.resolve("exam_" + group.getIndex() + "_" + variant + ".odt").toFile());
+        examTemplate.save(workspacePath.resolve("exam_" + group.getIdentifier() + "_" + variant + ".odt").toFile());
     }
 
     private static Exam buildExamModel(
