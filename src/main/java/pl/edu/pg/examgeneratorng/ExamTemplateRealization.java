@@ -1,6 +1,7 @@
 package pl.edu.pg.examgeneratorng;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.text.TextLineBreakElement;
@@ -10,6 +11,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import pl.edu.pg.examgeneratorng.exceptions.ExamTemplateRealizationException;
 import pl.edu.pg.examgeneratorng.util.DomUtils;
+import pl.edu.pg.examgeneratorng.util.ListUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +48,14 @@ final class ExamTemplateRealization {
     }
 
     private static OdfTextParagraph lineStringToParagraph(LineString str, OdfContentDom contentDom, String styleName) {
-        List<Node> children = str.getLines().stream()
-                .flatMap(line -> lineToNodes(contentDom, line).stream())
+        List<List<Node>> nodesMatrix = str.getLines().stream()
+                .map(line -> lineToNodes(contentDom, line))
                 .collect(Collectors.toList());
 
+        List<Node> nodes = ListUtils.join(nodesMatrix, () -> ImmutableList.of(new TextLineBreakElement(contentDom)));
+
         OdfTextParagraph paragraph = new OdfTextParagraph(contentDom, styleName);
-        appendChildren(paragraph, children);
+        appendChildren(paragraph, nodes);
 
         return paragraph;
     }
@@ -62,9 +66,6 @@ final class ExamTemplateRealization {
         line.chars()
                 .mapToObj(c -> (char) c)
                 .forEach(character -> combineNodesWithChar(contentDom, nodes, character));
-
-        TextLineBreakElement lineBreak = new TextLineBreakElement(contentDom);
-        nodes.add(lineBreak);
 
         return nodes;
     }
