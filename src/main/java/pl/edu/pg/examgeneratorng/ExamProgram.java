@@ -8,7 +8,7 @@ import lombok.Value;
 @Builder
 class ExamProgram {
     @NonNull
-    private String source;
+    private LineString source;
     @NonNull
-    private ProgramOutput output;
+    private LineString output;
 }

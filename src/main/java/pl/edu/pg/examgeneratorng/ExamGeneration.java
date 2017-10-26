@@ -8,12 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static pl.edu.pg.examgeneratorng.util.CxxUtils.runCxxProgram;
 import static pl.edu.pg.examgeneratorng.ExamTemplateLoading.findPlaceholders;
 import static pl.edu.pg.examgeneratorng.ExamTemplateRealization.fillPlaceholders;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateParsing.loadProgramTemplate;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
-import static pl.edu.pg.examgeneratorng.util.StringUtils.*;
+import static pl.edu.pg.examgeneratorng.util.CxxUtils.runCxxProgram;
+import static pl.edu.pg.examgeneratorng.util.StringUtils.dumpLines;
+import static pl.edu.pg.examgeneratorng.util.StringUtils.splitByNewline;
 
 final class ExamGeneration {
     private static final int GROUPS_COUNT = 2;
@@ -44,8 +45,8 @@ final class ExamGeneration {
         Exam exam = buildExamModel(programTemplates, group, variant);
         OdfTextDocument examTemplate = loadExamTemplate(workspacePath);
         OdfContentDom contentDom = examTemplate.getContentDom();
-        List<Placeholder> placeholders = findPlaceholders(contentDom.getRootElement());
-        fillPlaceholders(contentDom, placeholders, exam, variant);
+        List<PlaceholderRef> placeholderRefs = findPlaceholders(contentDom.getRootElement());
+        fillPlaceholders(contentDom, placeholderRefs, exam, variant);
         examTemplate.save(workspacePath.resolve("exam_" + group.getIdentifier() + "_" + variant + ".odt").toFile());
     }
 
@@ -68,13 +69,13 @@ final class ExamGeneration {
                 .build();
     }
 
-    private static ProgramOutput runProgram(ProgramTemplate programTemplate, Group group) {
-        String sourceCode = realizeProgramTemplate(programTemplate, group, ProgramVariant.COMPILER);
-        String output = runCxxProgram(sourceCode);
-        return new ProgramOutput(splitByNewline(output));
+    private static LineString runProgram(ProgramTemplate programTemplate, Group group) {
+        LineString sourceCode = realizeProgramTemplate(programTemplate, group, ProgramVariant.COMPILER);
+        String sourceCodeBuf = dumpLines(sourceCode.getLines());
+        return new LineString(splitByNewline(runCxxProgram(sourceCodeBuf)));
     }
 
-    private static String buildExamProgramSource(
+    private static LineString buildExamProgramSource(
             ProgramTemplate programTemplate, Group group, ExamVariant variant) {
         if (variant == ExamVariant.STUDENT) {
             return realizeProgramTemplate(programTemplate, group, ProgramVariant.STUDENT);

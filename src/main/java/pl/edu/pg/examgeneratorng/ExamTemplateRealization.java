@@ -1,5 +1,6 @@
 package pl.edu.pg.examgeneratorng;
 
+import com.google.common.base.Preconditions;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.text.TextLineBreakElement;
@@ -7,45 +8,47 @@ import org.odftoolkit.odfdom.dom.element.text.TextSElement;
 import org.odftoolkit.odfdom.incubator.doc.text.OdfTextParagraph;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+import pl.edu.pg.examgeneratorng.exceptions.ExamTemplateRealizationException;
 import pl.edu.pg.examgeneratorng.util.DomUtils;
-import pl.edu.pg.examgeneratorng.util.ListUtils;
-import pl.edu.pg.examgeneratorng.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static java.lang.Integer.parseInt;
+import static java.util.Collections.nCopies;
 import static pl.edu.pg.examgeneratorng.util.DomUtils.appendChildren;
+import static pl.edu.pg.examgeneratorng.util.ListUtils.concat;
+import static pl.edu.pg.examgeneratorng.util.StringUtils.nCopiesOfChar;
 
 final class ExamTemplateRealization {
     static void fillPlaceholders(
-            OdfContentDom contentDom, List<Placeholder> placeholders, Exam exam, ExamVariant variant) {
-        placeholders.forEach(placeholder -> fillPlaceholder(contentDom, placeholder, exam, variant));
+            OdfContentDom contentDom, List<PlaceholderRef> placeholderRefs, Exam exam, ExamVariant variant) {
+        placeholderRefs.forEach(placeholderRef -> fillPlaceholder(contentDom, placeholderRef, exam, variant));
     }
 
     private static void fillPlaceholder(
-            OdfContentDom contentDom, Placeholder placeholder, Exam exam, ExamVariant variant) {
+            OdfContentDom contentDom, PlaceholderRef placeholderRef, Exam exam, ExamVariant variant) {
+        Placeholder placeholder = placeholderRef.getPlaceholder();
         ExamProgram program = exam.getPrograms().get(placeholder.getIndex() - 1);
-        String content = extractContentForPlaceholder(program, placeholder, variant);
-        fillPlaceholderWithContent(contentDom, placeholder, content);
+        LineString content = extractContentForPlaceholder(program, placeholder, variant);
+        fillPlaceholderWithContent(contentDom, placeholderRef, content);
     }
 
-    private static void fillPlaceholderWithContent(OdfContentDom contentDom, Placeholder placeholder, String content) {
-        TableTableCellElement wrapperCell = placeholder.getWrapperCell();
-        String styleName = placeholder.getStyleName();
+    private static void fillPlaceholderWithContent(
+            OdfContentDom contentDom, PlaceholderRef placeholderRef, LineString content) {
+        TableTableCellElement wrapperCell = placeholderRef.getWrapperCell();
+        String styleName = placeholderRef.getStyleName();
 
         DomUtils.removeAllChildren(wrapperCell);
 
-        OdfTextParagraph codeParagraph = stringToParagraph(content, contentDom, styleName);
+        OdfTextParagraph codeParagraph = lineStringToParagraph(content, contentDom, styleName);
         wrapperCell.appendChild(codeParagraph);
     }
 
-    private static OdfTextParagraph stringToParagraph(String str, OdfContentDom contentDom, String styleName) {
-        List<Node> children = str
-                .chars()
-                .mapToObj(c -> (char) c)
-                .reduce(ListUtils.emptyMutableList(),
-                        (nodes, character) -> combineNodesWithChar(contentDom, nodes, character),
-                        ListUtils::concat);
+    private static OdfTextParagraph lineStringToParagraph(LineString str, OdfContentDom contentDom, String styleName) {
+        List<Node> children = str.getLines().stream()
+                .flatMap(line -> lineToNodes(contentDom, line).stream())
+                .collect(Collectors.toList());
 
         OdfTextParagraph paragraph = new OdfTextParagraph(contentDom, styleName);
         appendChildren(paragraph, children);
@@ -53,12 +56,22 @@ final class ExamTemplateRealization {
         return paragraph;
     }
 
-    private static List<Node> combineNodesWithChar(OdfContentDom contentDom, List<Node> nodes, Character character) {
+    private static List<Node> lineToNodes(OdfContentDom contentDom, String line) {
+        List<Node> nodes = new ArrayList<>();
+
+        line.chars()
+                .mapToObj(c -> (char) c)
+                .forEach(character -> combineNodesWithChar(contentDom, nodes, character));
+
+        TextLineBreakElement lineBreak = new TextLineBreakElement(contentDom);
+        nodes.add(lineBreak);
+
+        return nodes;
+    }
+
+    private static void combineNodesWithChar(OdfContentDom contentDom, List<Node> nodes, Character character) {
         Node last = nodes.isEmpty() ? null : nodes.get(nodes.size() - 1);
-        if (character == '\n') {
-            TextLineBreakElement lineBreak = new TextLineBreakElement(contentDom);
-            nodes.add(lineBreak);
-        } else if (character == ' ' && last instanceof Text) {
+        if (character == ' ' && last instanceof Text) {
             Text text = (Text) last;
             String textContent = text.getData();
             if (textContent.charAt(textContent.length() - 1) == ' ') {
@@ -78,27 +91,51 @@ final class ExamTemplateRealization {
             Text text = contentDom.createTextNode(character.toString());
             nodes.add(text);
         }
-        return nodes;
     }
 
-    private static String extractContentForPlaceholder(
+    private static LineString extractContentForPlaceholder(
             ExamProgram program, Placeholder placeholder, ExamVariant variant) {
         switch (placeholder.getKind()) {
             case CODE:
-                return program.getSource();
+                return dumpProgram(program.getSource(), placeholder);
             case OUTPUT:
-                return extractContentForOutputPlaceholder(program, placeholder);
+                return dumpOutput(program.getOutput(), placeholder);
             case SECRET_OUTPUT:
-                if (variant == ExamVariant.STUDENT) {
-                    return StringUtils.nCopiesOfChar(placeholder.getWidth(), '_');
-                } else if (variant == ExamVariant.TEACHER) {
-                    return extractContentForOutputPlaceholder(program, placeholder);
-                }
+                return dumpSecretOutput(program.getOutput(), placeholder, variant);
         }
         throw new AssertionError();
     }
 
-    private static String extractContentForOutputPlaceholder(ExamProgram program, Placeholder placeholder) {
-        return program.getOutput().getLines().get(placeholder.getLineIndex() - 1);
+    static LineString dumpProgram(LineString programSource, Placeholder placeholder) {
+        Preconditions.checkArgument(placeholder.getKind() == PlaceholderKind.CODE);
+        List<String> programLines = programSource.getLines();
+        if (programLines.size() > placeholder.getHeight()) {
+            throw new ExamTemplateRealizationException("Program is too high for placeholder " + placeholder.repr());
+        } else if (programSource.longestLineLength() > placeholder.getWidth()) {
+            throw new ExamTemplateRealizationException("Program is too wide for placeholder " + placeholder.repr());
+        } else {
+            int n = placeholder.getHeight() - programLines.size();
+            return new LineString(concat(programLines, nCopies(n, "")));
+        }
+    }
+
+    private static LineString dumpOutput(LineString programOutput, Placeholder placeholder) {
+        Preconditions.checkArgument(placeholder.getKind() == PlaceholderKind.OUTPUT);
+        return dumpOutputLineString(programOutput, placeholder);
+    }
+
+    private static LineString dumpOutputLineString(LineString programOutput, Placeholder placeholder) {
+        return LineString.fromSingleLine(programOutput.getLines().get(placeholder.getLineIndex() - 1));
+    }
+
+    private static LineString dumpSecretOutput(
+            LineString programOutput, Placeholder placeholder, ExamVariant variant) {
+        Preconditions.checkArgument(placeholder.getKind() == PlaceholderKind.SECRET_OUTPUT);
+        if (variant == ExamVariant.STUDENT) {
+            return LineString.fromSingleLine(nCopiesOfChar(placeholder.getWidth(), '_'));
+        } else if (variant == ExamVariant.TEACHER) {
+            return dumpOutputLineString(programOutput, placeholder);
+        }
+        throw new AssertionError();
     }
 }

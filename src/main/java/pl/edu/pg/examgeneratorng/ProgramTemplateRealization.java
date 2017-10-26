@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.nCopiesOfChar;
 
 final class ProgramTemplateRealization {
-    static String realizeProgramTemplate(
+    static LineString realizeProgramTemplate(
             ProgramTemplate programTemplate, Group group, ProgramVariant variant) {
-        return programTemplate.getLineTemplates().stream()
+        return new LineString(programTemplate.getLineTemplates().stream()
                 .map(lineTemplate -> realizeLineTemplate(lineTemplate, group, variant))
-                .collect(Collectors.joining());
+                .collect(Collectors.toList()));
     }
 
     static String realizeLineTemplate(LineTemplate lineTemplate, Group group, ProgramVariant variant) {
@@ -40,7 +40,7 @@ final class ProgramTemplateRealization {
     private static String realizeLineTemplateNodes(LineTemplate lineTemplate, Group group, ProgramVariant variant) {
         return lineTemplate.getNodes().stream()
                 .map(node -> realizeNode(node, group, variant))
-                .collect(Collectors.joining()) + "\n";
+                .collect(Collectors.joining());
     }
 
     private static String realizeNode(LineTemplate.Node node, Group group, ProgramVariant variant) {

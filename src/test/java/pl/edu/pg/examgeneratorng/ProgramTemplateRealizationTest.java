@@ -17,9 +17,9 @@ public class ProgramTemplateRealizationTest {
                 lineTemplate("bar")
         ));
 
-        String actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.STUDENT);
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "foo\nbar\n";
+        LineString expected = new LineString(ImmutableList.of("foo", "bar"));
 
         assertEquals(expected, actual);
     }
@@ -34,9 +34,9 @@ public class ProgramTemplateRealizationTest {
                 )
         ));
 
-        String actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.STUDENT);
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "___\n";
+        LineString expected = LineString.fromSingleLine("___");
 
         assertEquals(expected, actual);
     }
@@ -50,7 +50,7 @@ public class ProgramTemplateRealizationTest {
 
         String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "foo\n";
+        String expected = "foo";
 
         assertEquals(expected, actual);
     }
@@ -64,7 +64,7 @@ public class ProgramTemplateRealizationTest {
 
         String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "___\n";
+        String expected = "___";
 
         assertEquals(expected, actual);
     }
@@ -78,7 +78,7 @@ public class ProgramTemplateRealizationTest {
 
         String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "foo\n";
+        String expected = "foo";
 
         assertEquals(expected, actual);
     }
@@ -92,7 +92,7 @@ public class ProgramTemplateRealizationTest {
 
         String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "foo\n";
+        String expected = "foo";
 
         assertEquals(expected, actual);
     }
@@ -106,7 +106,7 @@ public class ProgramTemplateRealizationTest {
 
         String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "foo\n";
+        String expected = "foo";
 
         assertEquals(expected, actual);
     }
@@ -120,7 +120,7 @@ public class ProgramTemplateRealizationTest {
 
         String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "foo\n";
+        String expected = "foo";
 
         assertEquals(expected, actual);
     }
