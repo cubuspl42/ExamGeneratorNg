@@ -4,36 +4,42 @@ import pl.edu.pg.examgeneratorng.LineTemplate.GapNode;
 import pl.edu.pg.examgeneratorng.LineTemplate.LineKind;
 import pl.edu.pg.examgeneratorng.LineTemplate.TextNode;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pl.edu.pg.examgeneratorng.util.StringUtils.nCopiesOfChar;
 
 final class ProgramTemplateRealization {
     static LineString realizeProgramTemplate(
             ProgramTemplate programTemplate, Group group, ProgramVariant variant) {
-        return new LineString(programTemplate.getLineTemplates().stream()
+        List<String> lines = programTemplate.getLineTemplates().stream()
                 .map(lineTemplate -> realizeLineTemplate(lineTemplate, group, variant))
-                .collect(Collectors.toList()));
+                .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
+                .collect(Collectors.toList());
+        return new LineString(lines);
     }
 
-    static String realizeLineTemplate(LineTemplate lineTemplate, Group group, ProgramVariant variant) {
+    static Optional<String> realizeLineTemplate(LineTemplate lineTemplate, Group group, ProgramVariant variant) {
         LineKind lineKind = lineTemplate.getKind();
 
         if (lineKind == LineKind.NORMAL) {
-            return realizeLineTemplateNodes(lineTemplate, group, variant);
+            return Optional.of(realizeLineTemplateNodes(lineTemplate, group, variant));
         } else if (lineKind == LineKind.EXCLUDED) {
             if (variant != ProgramVariant.COMPILER) {
-                return realizeLineTemplateNodes(lineTemplate, group, variant);
+                return Optional.of(realizeLineTemplateNodes(lineTemplate, group, variant));
             } else {
-                return "";
+                return Optional.empty();
             }
         } else if (lineKind == LineKind.HIDDEN) {
             if (variant == ProgramVariant.COMPILER) {
-                return realizeLineTemplateNodes(lineTemplate, group, variant);
+                return Optional.of(realizeLineTemplateNodes(lineTemplate, group, variant));
             } else {
-                return "";
+                return Optional.empty();
             }
         }
+
         throw new AssertionError();
     }
 

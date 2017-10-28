@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import pl.edu.pg.examgeneratorng.LineTemplate.LineKind;
 
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
 import static pl.edu.pg.examgeneratorng.LineTemplateUtils.lineTemplate;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeLineTemplate;
@@ -26,7 +28,7 @@ public class ProgramTemplateRealizationTest {
 
 
     @Test
-    public void realizeProgramTemplate_gap() throws Exception {
+    public void realizeProgramTemplate_gapStudent() throws Exception {
         ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
                 new LineTemplate(
                         ImmutableList.of(new LineTemplate.GapNode("foo")),
@@ -42,15 +44,126 @@ public class ProgramTemplateRealizationTest {
     }
 
     @Test
+    public void realizeProgramTemplate_hiddenStudent() throws Exception {
+        ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("foo")), LineKind.NORMAL),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("bar")), LineKind.HIDDEN),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("baz")), LineKind.NORMAL)
+        ));
+
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.STUDENT);
+
+        LineString expected = new LineString(ImmutableList.of(
+                "foo",
+                "baz"
+        ));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void realizeProgramTemplate_hiddenTeacher() throws Exception {
+        ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("foo")), LineKind.NORMAL),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("bar")), LineKind.HIDDEN),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("baz")), LineKind.NORMAL)
+        ));
+
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.TEACHER);
+
+        LineString expected = new LineString(ImmutableList.of(
+                "foo",
+                "baz"
+        ));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void realizeProgramTemplate_hiddenCompiler() throws Exception {
+        ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("foo")), LineKind.NORMAL),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("bar")), LineKind.HIDDEN),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("baz")), LineKind.NORMAL)
+        ));
+
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.COMPILER);
+
+        LineString expected = new LineString(ImmutableList.of(
+                "foo",
+                "bar",
+                "baz"
+        ));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void realizeProgramTemplate_excludedStudent() throws Exception {
+        ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("foo")), LineKind.NORMAL),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("bar")), LineKind.EXCLUDED),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("baz")), LineKind.NORMAL)
+        ));
+
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.STUDENT);
+
+        LineString expected = new LineString(ImmutableList.of(
+                "foo",
+                "bar",
+                "baz"
+        ));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void realizeProgramTemplate_excludedTeacher() throws Exception {
+        ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("foo")), LineKind.NORMAL),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("bar")), LineKind.EXCLUDED),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("baz")), LineKind.NORMAL)
+        ));
+
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.TEACHER);
+
+        LineString expected = new LineString(ImmutableList.of(
+                "foo",
+                "bar",
+                "baz"
+        ));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void realizeProgramTemplate_excludedCompiler() throws Exception {
+        ProgramTemplate programTemplate = new ProgramTemplate(ImmutableList.of(
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("foo")), LineKind.NORMAL),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("bar")), LineKind.EXCLUDED),
+                new LineTemplate(ImmutableList.of(new LineTemplate.TextNode("baz")), LineKind.NORMAL)
+        ));
+
+        LineString actual = realizeProgramTemplate(programTemplate, Group.A, ProgramVariant.COMPILER);
+
+        LineString expected = new LineString(ImmutableList.of(
+                "foo",
+                "baz"
+        ));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void realizeLineTemplate_studentText() {
         LineTemplate lineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode("foo")),
                 LineKind.NORMAL
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "foo";
+        Optional<String> expected = Optional.of("foo");
 
         assertEquals(expected, actual);
     }
@@ -62,9 +175,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.NORMAL
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "___";
+        Optional<String> expected = Optional.of("___");
 
         assertEquals(expected, actual);
     }
@@ -76,9 +189,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.NORMAL
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "foo";
+        Optional<String> expected = Optional.of("foo");
 
         assertEquals(expected, actual);
     }
@@ -90,9 +203,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.NORMAL
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "foo";
+        Optional<String> expected = Optional.of("foo");
 
         assertEquals(expected, actual);
     }
@@ -104,9 +217,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.EXCLUDED
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "foo";
+        Optional<String> expected = Optional.of("foo");
 
         assertEquals(expected, actual);
     }
@@ -118,9 +231,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.EXCLUDED
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "foo";
+        Optional<String> expected = Optional.of("foo");
 
         assertEquals(expected, actual);
     }
@@ -132,9 +245,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.HIDDEN
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.STUDENT);
 
-        String expected = "";
+        Optional<String> expected = Optional.empty();
 
         assertEquals(expected, actual);
     }
@@ -146,9 +259,9 @@ public class ProgramTemplateRealizationTest {
                 LineKind.HIDDEN
         );
 
-        String actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
+        Optional<String> actual = realizeLineTemplate(lineTemplate, Group.A, ProgramVariant.TEACHER);
 
-        String expected = "";
+        Optional<String> expected = Optional.empty();
 
         assertEquals(expected, actual);
     }
