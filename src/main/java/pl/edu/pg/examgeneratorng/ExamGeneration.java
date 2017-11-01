@@ -12,9 +12,8 @@ import static pl.edu.pg.examgeneratorng.ExamTemplateLoading.findPlaceholders;
 import static pl.edu.pg.examgeneratorng.ExamTemplateRealization.fillPlaceholders;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateParsing.loadProgramTemplate;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
-import static pl.edu.pg.examgeneratorng.util.CxxUtils.runCxxProgram;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.dumpLines;
-import static pl.edu.pg.examgeneratorng.util.StringUtils.splitByNewline;
+
 
 final class ExamGeneration {
     private static final int GROUPS_COUNT = 2;
@@ -70,9 +69,14 @@ final class ExamGeneration {
     }
 
     private static LineString runProgram(ProgramTemplate programTemplate, Group group) {
+
         LineString sourceCode = realizeProgramTemplate(programTemplate, group, ProgramVariant.COMPILER);
         String sourceCodeBuf = dumpLines(sourceCode.getLines());
-        return new LineString(splitByNewline(runCxxProgram(sourceCodeBuf)));
+
+        GppCppProgramEvaluator gppCppProgramEvaluator = new GppCppProgramEvaluator();
+        ProgramOutput programOutput = gppCppProgramEvaluator.evaluate(sourceCodeBuf);
+
+        return new LineString(programOutput.getLines());
     }
 
     private static LineString buildExamProgramSource(

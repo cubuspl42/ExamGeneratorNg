@@ -9,4 +9,9 @@ import java.util.List;
 class ProgramOutput {
     @NonNull
     private List<String> lines;
+
+    public ProgramOutput(ProcessOutput processOutput){
+
+        this.lines = processOutput.getStandardOutput();
+    }
 }
