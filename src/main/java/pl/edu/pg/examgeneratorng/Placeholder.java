@@ -13,7 +13,7 @@ public class Placeholder {
 
     private PlaceholderKind kind;
     private int index;
-    private int lineIndex;
+    private int lineIndex; // 1-indexed
     private int width;
     private int height;
 

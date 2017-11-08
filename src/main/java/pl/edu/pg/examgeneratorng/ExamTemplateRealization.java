@@ -126,7 +126,13 @@ final class ExamTemplateRealization {
     }
 
     private static LineString dumpOutputLineString(LineString programOutput, Placeholder placeholder) {
-        return LineString.fromSingleLine(programOutput.getLines().get(placeholder.getLineIndex() - 1));
+        int lineIndex = placeholder.getLineIndex() - 1;
+        List<String> programOutputLines = programOutput.getLines();
+        if (lineIndex < programOutputLines.size()) {
+            return LineString.fromSingleLine(programOutputLines.get(lineIndex));
+        } else {
+            throw new ExamTemplateRealizationException(placeholder.repr() + ": Index out of bounds of program output");
+        }
     }
 
     private static LineString dumpSecretOutput(
