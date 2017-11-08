@@ -70,7 +70,7 @@ final class ExamGeneration {
 
     private static LineString runProgram(ProgramTemplate programTemplate, Group group) {
 
-        LineString sourceCode = realizeProgramTemplate(programTemplate, group, ProgramVariant.COMPILER);
+        LineString sourceCode = realizeProgramTemplate(programTemplate, ProgramVariant.COMPILER, group);
         String sourceCodeBuf = dumpLines(sourceCode.getLines());
 
         GppCppProgramEvaluator gppCppProgramEvaluator = new GppCppProgramEvaluator();
@@ -82,9 +82,9 @@ final class ExamGeneration {
     private static LineString buildExamProgramSource(
             ProgramTemplate programTemplate, Group group, ExamVariant variant) {
         if (variant == ExamVariant.STUDENT) {
-            return realizeProgramTemplate(programTemplate, group, ProgramVariant.STUDENT);
+            return realizeProgramTemplate(programTemplate, ProgramVariant.STUDENT, group);
         } else if (variant == ExamVariant.TEACHER) {
-            return realizeProgramTemplate(programTemplate, group, ProgramVariant.TEACHER);
+            return realizeProgramTemplate(programTemplate, ProgramVariant.TEACHER, group);
         }
         throw new AssertionError();
     }

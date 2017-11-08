@@ -15,7 +15,8 @@ public class LineTemplateParsingTest {
 
         LineTemplate expectedLineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode(lineStr)),
-                LineTemplate.LineKind.NORMAL
+                LineTemplate.LineKind.NORMAL,
+                null
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
@@ -33,7 +34,8 @@ public class LineTemplateParsingTest {
                         new LineTemplate.GapNode("i"),
                         new LineTemplate.TextNode("+na;")
                 ),
-                LineTemplate.LineKind.NORMAL
+                LineTemplate.LineKind.NORMAL,
+                null
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
@@ -53,7 +55,8 @@ public class LineTemplateParsingTest {
                         new LineTemplate.GapNode("na"),
                         new LineTemplate.TextNode(";")
                 ),
-                LineTemplate.LineKind.NORMAL
+                LineTemplate.LineKind.NORMAL,
+                null
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
@@ -67,7 +70,8 @@ public class LineTemplateParsingTest {
 
         LineTemplate expectedLineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode("  cout << &i << endl;")),
-                LineTemplate.LineKind.EXCLUDED
+                LineTemplate.LineKind.EXCLUDED,
+                null
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
@@ -81,7 +85,8 @@ public class LineTemplateParsingTest {
 
         LineTemplate expectedLineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode("foo %excluded bar")),
-                LineTemplate.LineKind.NORMAL
+                LineTemplate.LineKind.NORMAL,
+                null
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
@@ -95,7 +100,8 @@ public class LineTemplateParsingTest {
 
         LineTemplate expectedLineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode( "  cout << \"BŁĄD\" << endl;")),
-                LineTemplate.LineKind.HIDDEN
+                LineTemplate.LineKind.HIDDEN,
+                null
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
@@ -109,7 +115,39 @@ public class LineTemplateParsingTest {
 
         LineTemplate expectedLineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode( "foo %hidden bar")),
-                LineTemplate.LineKind.NORMAL
+                LineTemplate.LineKind.NORMAL,
+                null
+        );
+
+        assertEquals(expectedLineTemplate, lineTemplate);
+    }
+
+
+    @Test
+    public void test_parseLineTemplate_group() {
+        String lineStr = "foo bar %a";
+
+        LineTemplate lineTemplate = parseLineTemplate(lineStr);
+
+        LineTemplate expectedLineTemplate = new LineTemplate(
+                ImmutableList.of(new LineTemplate.TextNode( "foo bar")),
+                LineTemplate.LineKind.NORMAL,
+                Group.A
+        );
+
+        assertEquals(expectedLineTemplate, lineTemplate);
+    }
+
+    @Test
+    public void test_parseLineTemplate_excludedGroup() {
+        String lineStr = "foo bar %excluded %a";
+
+        LineTemplate lineTemplate = parseLineTemplate(lineStr);
+
+        LineTemplate expectedLineTemplate = new LineTemplate(
+                ImmutableList.of(new LineTemplate.TextNode( "foo bar")),
+                LineTemplate.LineKind.EXCLUDED,
+                Group.A
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
