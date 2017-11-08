@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public final class ProcessUtils {
 
     public static ProcessOutput execute(Path program) throws IOException, InterruptedException {
@@ -19,8 +21,8 @@ public final class ProcessUtils {
         Process process = new ProcessBuilder(arguments).start();
 
         int status = process.waitFor();
-        List<String> standardOutput = IOUtils.readLines(process.getInputStream());
-        List<String> errorOutput = IOUtils.readLines(process.getErrorStream());
+        List<String> standardOutput = IOUtils.readLines(process.getInputStream(), UTF_8);
+        List<String> errorOutput = IOUtils.readLines(process.getErrorStream(), UTF_8);
 
         return ProcessOutput.builder()
                 .status(status)
