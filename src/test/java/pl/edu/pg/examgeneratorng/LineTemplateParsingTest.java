@@ -74,6 +74,20 @@ public class LineTemplateParsingTest {
     }
 
     @Test
+    public void test_parseLineTemplate_excludedInline() {
+        String lineStr = "foo %excluded bar";
+
+        LineTemplate lineTemplate = parseLineTemplate(lineStr);
+
+        LineTemplate expectedLineTemplate = new LineTemplate(
+                ImmutableList.of(new LineTemplate.TextNode("foo %excluded bar")),
+                LineTemplate.LineKind.NORMAL
+        );
+
+        assertEquals(expectedLineTemplate, lineTemplate);
+    }
+
+    @Test
     public void test_parseLineTemplate_hidden() {
         String lineStr = "  cout << \"BŁĄD\" << endl; %hidden";
 
@@ -82,6 +96,20 @@ public class LineTemplateParsingTest {
         LineTemplate expectedLineTemplate = new LineTemplate(
                 ImmutableList.of(new LineTemplate.TextNode( "  cout << \"BŁĄD\" << endl;")),
                 LineTemplate.LineKind.HIDDEN
+        );
+
+        assertEquals(expectedLineTemplate, lineTemplate);
+    }
+
+    @Test
+    public void test_parseLineTemplate_hiddenInline() {
+        String lineStr = "foo %hidden bar";
+
+        LineTemplate lineTemplate = parseLineTemplate(lineStr);
+
+        LineTemplate expectedLineTemplate = new LineTemplate(
+                ImmutableList.of(new LineTemplate.TextNode( "foo %hidden bar")),
+                LineTemplate.LineKind.NORMAL
         );
 
         assertEquals(expectedLineTemplate, lineTemplate);
