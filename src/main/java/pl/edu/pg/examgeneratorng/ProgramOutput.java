@@ -10,7 +10,7 @@ class ProgramOutput {
     @NonNull
     private List<String> lines;
 
-    public ProgramOutput(ProcessOutput processOutput){
+    ProgramOutput(ProcessOutput processOutput){
 
         this.lines = processOutput.getStandardOutput();
     }

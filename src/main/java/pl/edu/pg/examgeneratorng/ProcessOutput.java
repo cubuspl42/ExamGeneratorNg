@@ -3,6 +3,7 @@ package pl.edu.pg.examgeneratorng;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
+import pl.edu.pg.examgeneratorng.util.ListUtils;
 
 import java.util.List;
 
@@ -10,8 +11,13 @@ import java.util.List;
 @Builder
 public class ProcessOutput {
     @NonNull
-    private List<String> standardOutput;
+    List<String> standardOutput;
     @NonNull
-    private List<String> errorOutput;
-    private int status;
+    List<String> errorOutput;
+    int status;
+
+    List<String> getDiagnostics(){
+
+        return ListUtils.concat(standardOutput, errorOutput);
+    }
 }

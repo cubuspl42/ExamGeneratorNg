@@ -71,10 +71,10 @@ public final class ExamGeneration {
     private static LineString runProgram(ProgramTemplate programTemplate, Group group) {
 
         LineString sourceCode = realizeProgramTemplate(programTemplate, ProgramVariant.COMPILER, group);
-        String sourceCodeBuf = dumpLines(sourceCode.getLines());
 
-        GppCppProgramEvaluator gppCppProgramEvaluator = new GppCppProgramEvaluator();
-        ProgramOutput programOutput = gppCppProgramEvaluator.evaluate(sourceCodeBuf);
+        CompilerOutput compilerOutput = new GccCompiler().compile(sourceCode.getLines());
+        Program program = compilerOutput.getProgram();
+        ProgramOutput programOutput = program.execute();
 
         return new LineString(programOutput.getLines());
     }
