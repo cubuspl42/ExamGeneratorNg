@@ -15,11 +15,11 @@ import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgra
 import static pl.edu.pg.examgeneratorng.util.StringUtils.dumpLines;
 
 
-final class ExamGeneration {
+public final class ExamGeneration {
     private static final int GROUPS_COUNT = 2;
     private static final int CODE_TEMPLATES_COUNT = 5;
 
-    static void generateAllExamVariants(Path workspacePath) throws Exception {
+    public static void generateAllExamVariants(Path workspacePath) throws Exception {
         List<ProgramTemplate> programTemplates = IntStream.range(0, CODE_TEMPLATES_COUNT)
                 .mapToObj(i -> loadProgramTemplate(workspacePath.resolve(String.format("%02d.cpp", i + 1))))
                 .collect(Collectors.toList());
