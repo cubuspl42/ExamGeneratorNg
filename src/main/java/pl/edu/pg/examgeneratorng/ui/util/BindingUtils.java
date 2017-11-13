@@ -1,10 +1,9 @@
 package pl.edu.pg.examgeneratorng.ui.util;
 
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import org.fxmisc.easybind.EasyBind;
 
 public final class BindingUtils {
     public static void bindButtonEnabled(Button button, ObservableValue<Boolean> enabled) {
@@ -12,6 +11,24 @@ public final class BindingUtils {
         button.getProperties().put(new Object(), enabled);
         enabled.addListener((observable, oldValue, newValue) -> {
             button.setDisable(!newValue);
+        });
+    }
+
+    public static void bindChildren(
+            Node targetNode, ObservableList<Node> targetChildren, ObservableValue<Node> sourceChild) {
+
+        targetNode.getProperties().put(new Object(), sourceChild);
+
+        if (sourceChild.getValue() != null) {
+            targetChildren.setAll(sourceChild.getValue());
+        }
+
+        sourceChild.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                targetChildren.setAll(newValue);
+            } else {
+                targetChildren.setAll();
+            }
         });
     }
 }
