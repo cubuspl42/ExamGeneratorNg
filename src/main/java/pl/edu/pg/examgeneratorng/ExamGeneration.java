@@ -5,43 +5,94 @@ import org.odftoolkit.odfdom.dom.OdfContentDom;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.toMap;
 import static pl.edu.pg.examgeneratorng.ExamTemplateLoading.findPlaceholders;
 import static pl.edu.pg.examgeneratorng.ExamTemplateRealization.fillPlaceholders;
-import static pl.edu.pg.examgeneratorng.ProgramTemplateParsing.loadProgramTemplate;
+import static pl.edu.pg.examgeneratorng.ProgramRunning.runPrograms;
+import static pl.edu.pg.examgeneratorng.ProgramTemplateCompilation.compileProgramTemplates;
+import static pl.edu.pg.examgeneratorng.ProgramTemplateLoading.loadProgramTemplates;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
-import static pl.edu.pg.examgeneratorng.util.StringUtils.dumpLines;
 
 
 public final class ExamGeneration {
     private static final int GROUPS_COUNT = 2;
-    private static final int CODE_TEMPLATES_COUNT = 5;
 
     public static void generateAllExamVariants(Path workspacePath) throws Exception {
-        List<ProgramTemplate> programTemplates = IntStream.range(0, CODE_TEMPLATES_COUNT)
-                .mapToObj(i -> loadProgramTemplate(workspacePath.resolve(String.format("%02d.cpp", i + 1))))
-                .collect(Collectors.toList());
+        ExamMetadata examMetadata = new ExamMetadata(GROUPS_COUNT);
 
-        IntStream.range(0, GROUPS_COUNT).forEach(groupIndex ->
-                generateExamVariantsForGroup(workspacePath, programTemplates, new Group(groupIndex)));
+        Map<ProgramId, ProgramTemplate> programTemplateMap = loadProgramTemplates(workspacePath);
+
+        Map<ProgramId, Map<Group, CompilerOutput>> compilerOutputMap = compileProgramTemplates(
+                programTemplateMap, examMetadata);
+
+        Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap = runPrograms(compilerOutputMap);
+
+        generateAllExamVariants(workspacePath, programTemplateMap, programOutputMap);
+    }
+
+    public static void generateAllExamVariants(
+            Path workspacePath,
+            Map<ProgramId, ProgramTemplate> programTemplateMap,
+            Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap
+    ) throws Exception {
+        IntStream.range(0, GROUPS_COUNT)
+                .mapToObj(Group::new)
+                .forEach(group -> {
+                            Map<ProgramId, ProgramOutput> programOutputMapEx =
+                                    extractGroupOutputs(programOutputMap, group);
+
+                            Map<ProgramId, EvaluatedProgramTemplate> evaluatedProgramTemplateMap =
+                                    programOutputMapEx.entrySet().stream().collect(toMap(
+                                            Map.Entry::getKey,
+                                            e -> new EvaluatedProgramTemplate(
+                                                    programTemplateMap.get(e.getKey()),
+                                                    e.getValue()
+                                            )));
+
+                            generateExamVariantsForGroup(
+                                    workspacePath,
+                                    evaluatedProgramTemplateMap,
+                                    group
+                            );
+                        }
+                );
+    }
+
+    private static Map<ProgramId, ProgramOutput> extractGroupOutputs(
+            Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap, Group group
+    ) {
+        return programOutputMap.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> {
+            Map<Group, ProgramOutput> groupProgramOutputMap = e.getValue();
+            return groupProgramOutputMap.get(group);
+        }));
     }
 
     private static void generateExamVariantsForGroup(
-            Path workspacePath, List<ProgramTemplate> programTemplates, Group group) {
+            Path workspacePath,
+            Map<ProgramId, EvaluatedProgramTemplate> programTemplateMap,
+            Group group
+    ) {
         try {
-            generateExamVariantForGroup(workspacePath, programTemplates, group, ExamVariant.STUDENT);
-            generateExamVariantForGroup(workspacePath, programTemplates, group, ExamVariant.TEACHER);
+            generateExamVariantForGroup(
+                    workspacePath, programTemplateMap, group, ExamVariant.STUDENT);
+            generateExamVariantForGroup(
+                    workspacePath, programTemplateMap, group, ExamVariant.TEACHER);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private static void generateExamVariantForGroup(
-            Path workspacePath, List<ProgramTemplate> programTemplates, Group group, ExamVariant variant
+            Path workspacePath,
+            Map<ProgramId, EvaluatedProgramTemplate> programTemplateMap,
+            Group group,
+            ExamVariant variant
     ) throws Exception {
-        Exam exam = buildExamModel(programTemplates, group, variant);
+        Exam exam = buildExamModel(programTemplateMap, group, variant);
         OdfTextDocument examTemplate = loadExamTemplate(workspacePath);
         OdfContentDom contentDom = examTemplate.getContentDom();
         List<PlaceholderRef> placeholderRefs = findPlaceholders(contentDom.getRootElement());
@@ -50,8 +101,8 @@ public final class ExamGeneration {
     }
 
     private static Exam buildExamModel(
-            List<ProgramTemplate> programTemplates, Group group, ExamVariant variant) {
-        List<ExamProgram> examPrograms = programTemplates.stream()
+            Map<ProgramId, EvaluatedProgramTemplate> programTemplateMap, Group group, ExamVariant variant) {
+        List<ExamProgram> examPrograms = programTemplateMap.values().stream()
                 .map(p -> buildExamProgram(p, group, variant))
                 .collect(Collectors.toList());
         return Exam.builder()
@@ -61,22 +112,11 @@ public final class ExamGeneration {
     }
 
     private static ExamProgram buildExamProgram(
-            ProgramTemplate programTemplate, Group group, ExamVariant variant) {
+            EvaluatedProgramTemplate programTemplate, Group group, ExamVariant variant) {
         return ExamProgram.builder()
-                .source(buildExamProgramSource(programTemplate, group, variant))
-                .output(runProgram(programTemplate, group))
+                .source(buildExamProgramSource(programTemplate.getProgramTemplate(), group, variant))
+                .output(new LineString(programTemplate.getProgramOutput().getLines()))
                 .build();
-    }
-
-    private static LineString runProgram(ProgramTemplate programTemplate, Group group) {
-
-        LineString sourceCode = realizeProgramTemplate(programTemplate, ProgramVariant.COMPILER, group);
-
-        CompilerOutput compilerOutput = new GccCompiler().compile(sourceCode.getLines());
-        Program program = compilerOutput.getProgram();
-        ProgramOutput programOutput = program.execute();
-
-        return new LineString(programOutput.getLines());
     }
 
     private static LineString buildExamProgramSource(
@@ -97,5 +137,4 @@ public final class ExamGeneration {
             throw new RuntimeException(e);
         }
     }
-
 }
