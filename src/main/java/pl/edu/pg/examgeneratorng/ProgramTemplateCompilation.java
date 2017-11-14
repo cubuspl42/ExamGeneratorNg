@@ -1,22 +1,14 @@
 package pl.edu.pg.examgeneratorng;
 
-import lombok.Value;
-
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
 
 final class ProgramTemplateCompilation {
-    @Value
-    private static class GroupCompilerOutput {
-        private Group group;
-        private CompilerOutput compilerOutput;
-    }
-
     static Map<ProgramId, Map<Group, CompilerOutput>> compileProgramTemplates(
             Map<ProgramId, ProgramTemplate> programTemplateMap, ExamMetadata examMetadata
     ) {
@@ -30,13 +22,11 @@ final class ProgramTemplateCompilation {
             ProgramTemplate programTemplate, ExamMetadata examMetadata
     ) {
         return IntStream.range(0, examMetadata.getGroupCount()).mapToObj(Group::new)
-                .map(group -> compileProgramTemplate(programTemplate, group))
-                .collect(Collectors.toMap(GroupCompilerOutput::getGroup, GroupCompilerOutput::getCompilerOutput));
+                .collect(toMap(identity(), group -> compileProgramTemplate(programTemplate, group)));
     }
 
-    private static GroupCompilerOutput compileProgramTemplate(ProgramTemplate programTemplate, Group group) {
+    private static CompilerOutput compileProgramTemplate(ProgramTemplate programTemplate, Group group) {
         LineString sourceCode = realizeProgramTemplate(programTemplate, ProgramVariant.COMPILER, group);
-        CompilerOutput compilerOutput = new GccCompiler().compile(sourceCode.getLines());
-        return new GroupCompilerOutput(group, compilerOutput);
+        return new GccCompiler().compile(sourceCode.getLines());
     }
 }
