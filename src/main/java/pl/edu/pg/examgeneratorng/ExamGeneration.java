@@ -6,6 +6,7 @@ import org.odftoolkit.odfdom.dom.OdfContentDom;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -29,9 +30,22 @@ public final class ExamGeneration {
         Map<ProgramId, Map<Group, CompilerOutput>> compilerOutputMap = compileProgramTemplates(
                 programTemplateMap, examMetadata);
 
-        Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap = runPrograms(compilerOutputMap);
+        Map<ProgramId, Map<Group, ProcessOutput>> processOutputMap = runPrograms(compilerOutputMap);
+
+        Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap = extractStandardOutputs(processOutputMap);
 
         generateAllExamVariants(workspacePath, programTemplateMap, programOutputMap);
+    }
+
+    private static Map<ProgramId, Map<Group, ProgramOutput>> extractStandardOutputs(
+            Map<ProgramId, Map<Group, ProcessOutput>> programOutputMap
+    ) {
+        return programOutputMap.entrySet().stream().collect(toMap(Entry::getKey, e -> {
+            Map<Group, ProcessOutput> groupProcessOutputMap = e.getValue();
+            return groupProcessOutputMap.entrySet().stream().collect(toMap(Entry::getKey,
+                    e1 -> new ProgramOutput(e1.getValue())
+            ));
+        }));
     }
 
     public static void generateAllExamVariants(
@@ -47,7 +61,7 @@ public final class ExamGeneration {
 
                             Map<ProgramId, EvaluatedProgramTemplate> evaluatedProgramTemplateMap =
                                     programOutputMapEx.entrySet().stream().collect(toMap(
-                                            Map.Entry::getKey,
+                                            Entry::getKey,
                                             e -> new EvaluatedProgramTemplate(
                                                     programTemplateMap.get(e.getKey()),
                                                     e.getValue()
@@ -65,7 +79,7 @@ public final class ExamGeneration {
     private static Map<ProgramId, ProgramOutput> extractGroupOutputs(
             Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap, Group group
     ) {
-        return programOutputMap.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> {
+        return programOutputMap.entrySet().stream().collect(toMap(Entry::getKey, e -> {
             Map<Group, ProgramOutput> groupProgramOutputMap = e.getValue();
             return groupProgramOutputMap.get(group);
         }));

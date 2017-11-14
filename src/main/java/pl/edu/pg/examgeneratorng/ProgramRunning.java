@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import static java.util.stream.Collectors.toMap;
 
 final class ProgramRunning {
-    static Map<ProgramId, Map<Group, ProgramOutput>> runPrograms(
+    static Map<ProgramId, Map<Group, ProcessOutput>> runPrograms(
             Map<ProgramId, Map<Group, CompilerOutput>> compilerOutputMap
     ) {
         return compilerOutputMap.entrySet().stream().collect(toMap(Entry::getKey, e -> {

@@ -13,11 +13,11 @@ public class CppProgram implements Program{
     private Path program;
 
     @Override
-    public ProgramOutput execute(){
+    public ProcessOutput execute(){
 
         try{
 
-            return new ProgramOutput(ProcessUtils.execute(program));
+            return ProcessUtils.execute(program);
         }
         catch(IOException | InterruptedException exception){
 
