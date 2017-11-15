@@ -1,5 +1,6 @@
 package pl.edu.pg.examgeneratorng.ui;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,6 +25,7 @@ import pl.edu.pg.examgeneratorng.ui.model.ProjectTask.State;
 
 import java.io.File;
 
+import static org.fxmisc.easybind.EasyBind.monadic;
 import static org.fxmisc.easybind.EasyBind.select;
 import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindButtonEnabled;
 import static pl.edu.pg.examgeneratorng.ui.util.JavaFXUtils.group;
@@ -48,6 +50,12 @@ public class MainWindowController {
     void initialize(Application application, Stage stage) {
         this.application = application;
         this.stage = stage;
+
+        stage.titleProperty().bind(
+                Bindings.concat("Exam Generator", monadic(application.getOpenProject())
+                        .map(project -> " - [" + project.getWorkspacePath().toString() + "]")
+                        .orElse(""))
+        );
 
         statusText.textProperty().bind(
                 select(application.getOpenProject())
