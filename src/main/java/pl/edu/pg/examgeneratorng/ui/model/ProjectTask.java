@@ -55,7 +55,7 @@ public class ProjectTask {
                 try {
                     generateAllExamVariants(workspacePath, diagnostic -> pushDiagnostic(diagnostic));
                 } catch (Exception e) {
-                    pushDiagnostic(new Diagnostic(DiagnosticKind.ERROR, e.getMessage()));
+                    pushDiagnostic(new Diagnostic(DiagnosticKind.ERROR, e.toString()));
                     throw e;
                 }
 

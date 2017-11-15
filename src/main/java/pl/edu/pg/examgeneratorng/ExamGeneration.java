@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toMap;
@@ -32,7 +31,7 @@ public final class ExamGeneration {
         Map<ProgramId, Map<Group, CompilerOutput>> compilerOutputMap = compileProgramTemplates(
                 programTemplateMap, examMetadata, diagnosticStream);
 
-        Map<ProgramId, Map<Group, ProcessOutput>> processOutputMap = runPrograms(compilerOutputMap);
+        Map<ProgramId, Map<Group, ProcessOutput>> processOutputMap = runPrograms(compilerOutputMap, diagnosticStream);
 
         Map<ProgramId, Map<Group, ProgramOutput>> programOutputMap = extractStandardOutputs(processOutputMap);
 
