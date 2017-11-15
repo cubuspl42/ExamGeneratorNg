@@ -42,11 +42,13 @@ public class GccCompiler implements Compiler {
 
     private CompilerOutput compile(Path sourceCode) throws IOException, InterruptedException {
 
-        Path program = Paths.get(
+        Path programPath = Paths.get(
                 directoryWithTemporaryFiles() + File.separator + UUID.randomUUID().toString() + ".cpp");
         ProcessOutput compilationProcessOutput=
-                ProcessUtils.execute("g++", "-o", program.toString(), sourceCode.toString());
+                ProcessUtils.execute("g++", "-o", programPath.toString(), sourceCode.toString());
 
-        return new CompilerOutput(compilationProcessOutput.getDiagnostics(), new CppProgram(program));
+        Program program = compilationProcessOutput.getStatus() == 0 ? new CppProgram(programPath) : null;
+
+        return new CompilerOutput(compilationProcessOutput.getDiagnostics(), program);
     }
 }
