@@ -116,12 +116,13 @@ public final class ExamGeneration {
 
     private static Exam buildExamModel(
             Map<ProgramId, EvaluatedProgramTemplate> programTemplateMap, Group group, ExamVariant variant) {
-        List<ExamProgram> examPrograms = programTemplateMap.values().stream()
-                .map(p -> buildExamProgram(p, group, variant))
-                .collect(Collectors.toList());
+        Map<ProgramId, ExamProgram> examProgramMap = programTemplateMap.entrySet().stream().collect(toMap(
+                Entry::getKey,
+                e -> buildExamProgram(e.getValue(), group, variant))
+        );
         return Exam.builder()
                 .group(group.getIdentifier())
-                .programs(examPrograms)
+                .examProgramMap(examProgramMap)
                 .build();
     }
 

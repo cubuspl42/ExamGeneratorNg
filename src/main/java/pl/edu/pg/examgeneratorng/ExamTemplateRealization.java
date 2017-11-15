@@ -31,7 +31,7 @@ final class ExamTemplateRealization {
     private static void fillPlaceholder(
             OdfContentDom contentDom, PlaceholderRef placeholderRef, Exam exam, ExamVariant variant) {
         Placeholder placeholder = placeholderRef.getPlaceholder();
-        ExamProgram program = exam.getPrograms().get(placeholder.getIndex() - 1);
+        ExamProgram program = exam.getExamProgramMap().get(new ProgramId(placeholder.getIndex()));
         LineString content = extractContentForPlaceholder(program, placeholder, variant);
         fillPlaceholderWithContent(contentDom, placeholderRef, content);
     }
