@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         configureLogging();
         Path workspacePath = Paths.get(args[0]);
-        generateAllExamVariants(workspacePath);
+        generateAllExamVariants(workspacePath, diagnostic ->
+                System.err.println(diagnostic.getMessage()));
     }
-
 }

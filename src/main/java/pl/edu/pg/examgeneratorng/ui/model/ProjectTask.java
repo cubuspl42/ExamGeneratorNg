@@ -53,7 +53,7 @@ public class ProjectTask {
                 updateProgress(0, 1);
 
                 try {
-                    generateAllExamVariants(workspacePath);
+                    generateAllExamVariants(workspacePath, diagnostic -> pushDiagnostic(diagnostic));
                 } catch (Exception e) {
                     pushDiagnostic(new Diagnostic(DiagnosticKind.ERROR, e.getMessage()));
                     throw e;

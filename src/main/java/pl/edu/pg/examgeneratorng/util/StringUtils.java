@@ -24,7 +24,7 @@ public class StringUtils {
         }
     }
 
-    public static String dumpLines(List<String> lines) {
+    public static String joinLines(List<String> lines) {
         return lines.stream()
                 .map(line -> line + "\n")
                 .collect(Collectors.joining());

@@ -22,13 +22,15 @@ import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgra
 public final class ExamGeneration {
     private static final int GROUPS_COUNT = 2;
 
-    public static void generateAllExamVariants(Path workspacePath) throws Exception {
+    public static void generateAllExamVariants(
+            Path workspacePath, DiagnosticStream diagnosticStream
+    ) throws Exception {
         ExamMetadata examMetadata = new ExamMetadata(GROUPS_COUNT);
 
         Map<ProgramId, ProgramTemplate> programTemplateMap = loadProgramTemplates(workspacePath);
 
         Map<ProgramId, Map<Group, CompilerOutput>> compilerOutputMap = compileProgramTemplates(
-                programTemplateMap, examMetadata);
+                programTemplateMap, examMetadata, diagnosticStream);
 
         Map<ProgramId, Map<Group, ProcessOutput>> processOutputMap = runPrograms(compilerOutputMap);
 
