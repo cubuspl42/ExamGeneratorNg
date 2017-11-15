@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import static pl.edu.pg.examgeneratorng.util.FileUtils.directoryWithTemporaryFiles;
 
@@ -41,7 +42,8 @@ public class GccCompiler implements Compiler {
 
     private CompilerOutput compile(Path sourceCode) throws IOException, InterruptedException {
 
-        Path program = Paths.get(directoryWithTemporaryFiles() + File.separator + "program.cpp");
+        Path program = Paths.get(
+                directoryWithTemporaryFiles() + File.separator + UUID.randomUUID().toString() + ".cpp");
         ProcessOutput compilationProcessOutput=
                 ProcessUtils.execute("g++", "-o", program.toString(), sourceCode.toString());
 
