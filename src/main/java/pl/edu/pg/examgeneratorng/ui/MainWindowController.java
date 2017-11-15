@@ -115,6 +115,8 @@ public class MainWindowController {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Open project");
         File file = directoryChooser.showDialog(stage);
-        application.openProject(file.toPath());
+        if (file != null) {
+            application.openProject(file.toPath());
+        }
     }
 }
