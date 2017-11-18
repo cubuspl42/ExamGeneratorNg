@@ -11,4 +11,13 @@ class ExamProgram {
     private LineString source;
     @NonNull
     private LineString output;
+
+    public static ExamProgram emptyExamProgram() {
+
+        return ExamProgram
+                .builder()
+                .source(LineString.fromSingleLine(""))
+                .output(LineString.fromSingleLine(""))
+                .build();
+    }
 }

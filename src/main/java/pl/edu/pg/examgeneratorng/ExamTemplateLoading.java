@@ -7,37 +7,38 @@ import org.w3c.dom.Node;
 import pl.edu.pg.examgeneratorng.util.DomUtils;
 
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import static pl.edu.pg.examgeneratorng.Placeholder.PLACEHOLDER_PATTERN;
+import static pl.edu.pg.examgeneratorng.LinePlaceholder.isLinePlaceholder;
+import static pl.edu.pg.examgeneratorng.MatrixPlaceholder.isMatrixPlaceholder;
 
 final class ExamTemplateLoading {
 
     static List<PlaceholderRef> findPlaceholders(Node node) {
+        if (isNotLineOrMatrixPlaceholder(node))
+            return DomUtils.getChildren(node).stream()
+                    .flatMap(child -> findPlaceholders(child).stream())
+                    .collect(Collectors.toList());
+
         Node firstChild = node.getFirstChild();
         String textContent = node.getTextContent();
-        Matcher matcher = PLACEHOLDER_PATTERN.matcher(textContent);
 
-        if (matcher.matches()
-                && node instanceof TableTableCellElement
-                && firstChild instanceof TextPElement) {
+        TableTableCellElement wrapperCell = (TableTableCellElement) node;
+        TextPElement firstParagraph = (TextPElement) firstChild;
+        String firstParagraphStyleName = firstParagraph.getStyleName();
 
-            TableTableCellElement wrapperCell = (TableTableCellElement) node;
-            TextPElement firstParagraph = (TextPElement) firstChild;
-            String firstParagraphStyleName = firstParagraph.getStyleName();
+        Placeholder placeholder = isMatrixPlaceholder(textContent) ?
+                MatrixPlaceholder.parse(textContent) : LinePlaceholder.parse(textContent);
 
-            Placeholder placeholder = Placeholder.parse(textContent);
+        PlaceholderRef placeholderRef = new PlaceholderRef(wrapperCell, firstParagraphStyleName, placeholder);
 
-            PlaceholderRef placeholderRef = new PlaceholderRef(
-                    wrapperCell, firstParagraphStyleName, placeholder);
-
-            return ImmutableList.of(placeholderRef);
-        }
-
-        return DomUtils.getChildren(node).stream()
-                .flatMap(child -> findPlaceholders(child).stream())
-                .collect(Collectors.toList());
+        return ImmutableList.of(placeholderRef);
     }
 
+    private static boolean isNotLineOrMatrixPlaceholder(Node node) {
+
+        return !((isMatrixPlaceholder(node.getTextContent()) || isLinePlaceholder(node.getTextContent()))
+                && node instanceof TableTableCellElement
+                && node.getFirstChild() instanceof TextPElement);
+    }
 }
