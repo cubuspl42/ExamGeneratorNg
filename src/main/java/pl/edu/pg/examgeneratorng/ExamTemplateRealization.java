@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.nCopies;
+import static pl.edu.pg.examgeneratorng.LinePlaceholder.Kind.GROUP;
+import static pl.edu.pg.examgeneratorng.LinePlaceholder.Kind.KIND;
+import static pl.edu.pg.examgeneratorng.MatrixPlaceholder.Kind.*;
 import static pl.edu.pg.examgeneratorng.util.DomUtils.appendChildren;
 import static pl.edu.pg.examgeneratorng.util.ListUtils.concat;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.nCopiesOfChar;
@@ -31,8 +34,10 @@ final class ExamTemplateRealization {
     private static void fillPlaceholder(
             OdfContentDom contentDom, PlaceholderRef placeholderRef, Exam exam, ExamVariant variant) {
         Placeholder placeholder = placeholderRef.getPlaceholder();
-        ExamProgram program = exam.getExamProgramMap().get(new ProgramId(placeholder.getIndex()));
-        LineString content = extractContentForPlaceholder(program, placeholder, variant);
+        ExamProgram program = placeholder instanceof MatrixPlaceholder ?
+                exam.getExamProgramMap().get(new ProgramId(((MatrixPlaceholder) placeholder).getIndex())) : ExamProgram.emptyExamProgram();
+        LineString content = extractContentForPlaceholder
+                (program, placeholder, variant, Group.fromLowercaseIdentifier(exam.getGroup().toLowerCase()));
         fillPlaceholderWithContent(contentDom, placeholderRef, content);
     }
 
@@ -95,20 +100,28 @@ final class ExamTemplateRealization {
     }
 
     private static LineString extractContentForPlaceholder(
-            ExamProgram program, Placeholder placeholder, ExamVariant variant) {
-        switch (placeholder.getKind()) {
-            case CODE:
-                return dumpProgram(program.getSource(), placeholder);
-            case OUTPUT:
-                return dumpOutput(program.getOutput(), placeholder);
-            case SECRET_OUTPUT:
-                return dumpSecretOutput(program.getOutput(), placeholder, variant);
-        }
+            ExamProgram program, Placeholder placeholder, ExamVariant variant, Group group) {
+
+        if (placeholder.getKind() == CODE)
+            return dumpProgram(program.getSource(), (MatrixPlaceholder) placeholder);
+
+        else if (placeholder.getKind() == OUTPUT)
+            return dumpOutput(program.getOutput(), (MatrixPlaceholder) placeholder);
+
+        else if (placeholder.getKind() == SECRET_OUTPUT)
+            return dumpSecretOutput(program.getOutput(), (MatrixPlaceholder) placeholder, variant);
+
+        else if (placeholder.getKind() == GROUP)
+            return LineString.fromSingleLine(group.getIdentifier());
+
+        else if (placeholder.getKind() == KIND)
+            return LineString.fromSingleLine(variant.name());
+
         throw new AssertionError();
     }
 
-    static LineString dumpProgram(LineString programSource, Placeholder placeholder) {
-        Preconditions.checkArgument(placeholder.getKind() == PlaceholderKind.CODE);
+    static LineString dumpProgram(LineString programSource, MatrixPlaceholder placeholder) {
+        Preconditions.checkArgument(placeholder.getKind() == CODE);
         List<String> programLines = programSource.getLines();
         if (programLines.size() > placeholder.getHeight()) {
             throw new ExamTemplateRealizationException("Program is too high for placeholder " + placeholder.repr());
@@ -120,12 +133,12 @@ final class ExamTemplateRealization {
         }
     }
 
-    private static LineString dumpOutput(LineString programOutput, Placeholder placeholder) {
-        Preconditions.checkArgument(placeholder.getKind() == PlaceholderKind.OUTPUT);
+    private static LineString dumpOutput(LineString programOutput, MatrixPlaceholder placeholder) {
+        Preconditions.checkArgument(placeholder.getKind() == OUTPUT);
         return dumpOutputLineString(programOutput, placeholder);
     }
 
-    private static LineString dumpOutputLineString(LineString programOutput, Placeholder placeholder) {
+    private static LineString dumpOutputLineString(LineString programOutput, MatrixPlaceholder placeholder) {
         int lineIndex = placeholder.getLineIndex() - 1;
         List<String> programOutputLines = programOutput.getLines();
         if (lineIndex < programOutputLines.size()) {
@@ -136,8 +149,8 @@ final class ExamTemplateRealization {
     }
 
     private static LineString dumpSecretOutput(
-            LineString programOutput, Placeholder placeholder, ExamVariant variant) {
-        Preconditions.checkArgument(placeholder.getKind() == PlaceholderKind.SECRET_OUTPUT);
+            LineString programOutput, MatrixPlaceholder placeholder, ExamVariant variant) {
+        Preconditions.checkArgument(placeholder.getKind() == SECRET_OUTPUT);
         if (variant == ExamVariant.STUDENT) {
             return LineString.fromSingleLine(nCopiesOfChar(placeholder.getWidth(), '_'));
         } else if (variant == ExamVariant.TEACHER) {

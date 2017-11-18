@@ -29,4 +29,10 @@ public class StringUtils {
                 .map(line -> line + "\n")
                 .collect(Collectors.joining());
     }
+
+
+    public static String removeAllWhitespaces(String string) {
+
+        return string.replaceAll("\\s", "");
+    }
 }
