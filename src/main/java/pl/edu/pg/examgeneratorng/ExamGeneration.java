@@ -3,6 +3,9 @@ package pl.edu.pg.examgeneratorng;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,7 @@ import static pl.edu.pg.examgeneratorng.ProgramRunning.runPrograms;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateCompilation.compileProgramTemplates;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateLoading.loadProgramTemplates;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
+import static org.apache.commons.io.FileUtils.*;
 
 
 public final class ExamGeneration {
@@ -68,6 +72,8 @@ public final class ExamGeneration {
                                                     e.getValue()
                                             )));
 
+                            generateFilesWithProgramsOutputs
+                                    (programOutputMap, workspacePath);
                             generateExamVariantsForGroup(
                                     workspacePath,
                                     evaluatedProgramTemplateMap,
@@ -84,6 +90,55 @@ public final class ExamGeneration {
             Map<Group, ProgramOutput> groupProgramOutputMap = e.getValue();
             return groupProgramOutputMap.get(group);
         }));
+    }
+
+    private static void generateFilesWithProgramsOutputs
+            (Map<ProgramId, Map<Group, ProgramOutput>> programsAndItsOutputsForEachGroup, Path destinationDirectory) {
+
+        try {
+            Path directoryWithOutputs = destinationDirectory.resolve("outputs");
+
+            deleteDirectory(directoryWithOutputs.toFile());
+            Files.createDirectory(directoryWithOutputs);
+
+            IntStream.range(0, GROUPS_COUNT)
+                    .mapToObj(Group::new)
+                    .forEach(group -> generateFilesWithProgramsOutputsForGroup
+                            (extractGroupOutputs(programsAndItsOutputsForEachGroup, group),
+                                    directoryWithOutputs.resolve(group.getIdentifier())));
+
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    private static void generateFilesWithProgramsOutputsForGroup
+            (Map<ProgramId, ProgramOutput> outputsOfProgramsOfGroup, Path destinyDirectory) {
+
+        try{
+            if(Files.notExists(destinyDirectory))
+                Files.createDirectory(destinyDirectory);
+        }
+        catch(IOException ioException){
+            throw new UncheckedIOException(ioException);
+        }
+
+        outputsOfProgramsOfGroup
+                .keySet()
+                .forEach(programId -> {
+                    try{
+                        Path programsDirectory = destinyDirectory.resolve(programId.getId() + "");
+                        Files.createDirectory(programsDirectory);
+                        Path programsOutput = programsDirectory.resolve("standard output.txt");
+                        Files.write(programsOutput, outputsOfProgramsOfGroup.get(programId).getStandardOutput());
+
+                        Path programsErrorOutput = programsDirectory.resolve ("error output.txt");
+                        Files.write(programsErrorOutput, outputsOfProgramsOfGroup.get(programId).getErrorOutput());
+                    }
+                    catch(IOException ioException){
+                        throw new UncheckedIOException(ioException);
+                    }
+                });
     }
 
     private static void generateExamVariantsForGroup(
@@ -131,7 +186,7 @@ public final class ExamGeneration {
             EvaluatedProgramTemplate programTemplate, Group group, ExamVariant variant) {
         return ExamProgram.builder()
                 .source(buildExamProgramSource(programTemplate.getProgramTemplate(), group, variant))
-                .output(new LineString(programTemplate.getProgramOutput().getLines()))
+                .output(new LineString(programTemplate.getProgramOutput().getStandardOutput()))
                 .build();
     }
 
