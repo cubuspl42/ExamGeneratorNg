@@ -8,10 +8,13 @@ import java.util.List;
 @Value
 class ProgramOutput {
     @NonNull
-    private List<String> lines;
+    private List<String> standardOutput;
+    @NonNull
+    private List<String> errorOutput;
 
     ProgramOutput(ProcessOutput processOutput){
 
-        this.lines = processOutput.getStandardOutput();
+        standardOutput = processOutput.getStandardOutput();
+        errorOutput = processOutput.getErrorOutput();
     }
 }
