@@ -31,6 +31,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
+import static org.fxmisc.easybind.EasyBind.monadic;
 import static pl.edu.pg.examgeneratorng.ExamGeneration.generateExamVariantsForGroup;
 import static pl.edu.pg.examgeneratorng.ProgramRunning.runProgram;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateCompilation.compileProgramTemplate;
@@ -180,8 +181,10 @@ public class ProjectTask {
     }
 
     public ObservableValue<State> getState() {
-        return EasyBind.monadic(getProgress())
-                .map(progress -> progress.doubleValue() == 1.0 ? State.SUCCEEDED : State.RUNNING);
+        return Bindings.when(Bindings.isNull(promiseContext.getException()))
+                .then(monadic(getProgress())
+                        .map(progress -> progress.doubleValue() == 1.0 ? State.SUCCEEDED : State.RUNNING))
+                .otherwise(State.FAILED);
     }
 
     public ObservableValue<List<Program>> getPrograms() {
