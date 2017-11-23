@@ -12,6 +12,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -19,15 +20,19 @@ import javafx.util.Callback;
 import lombok.val;
 import pl.edu.pg.examgeneratorng.Diagnostic;
 import pl.edu.pg.examgeneratorng.ui.model.Application;
+import pl.edu.pg.examgeneratorng.ui.model.Program;
 import pl.edu.pg.examgeneratorng.ui.model.Project;
 import pl.edu.pg.examgeneratorng.ui.model.ProjectTask;
 import pl.edu.pg.examgeneratorng.ui.model.ProjectTask.State;
+import pl.edu.pg.examgeneratorng.util.StringUtils;
 
 import java.io.File;
+import java.util.stream.Collectors;
 
 import static org.fxmisc.easybind.EasyBind.monadic;
 import static org.fxmisc.easybind.EasyBind.select;
 import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindButtonEnabled;
+import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindChildren;
 import static pl.edu.pg.examgeneratorng.ui.util.JavaFXUtils.group;
 
 public class MainWindowController {
@@ -39,6 +44,9 @@ public class MainWindowController {
 
     @FXML
     private GridPane progressGridPane;
+
+    @FXML
+    private VBox programsVbox;
 
     @FXML
     private BorderPane contentBorderPane;
@@ -80,6 +88,21 @@ public class MainWindowController {
                         .map(x -> 100.0 * (Double) x)
                         .orElse(0.0)
         );
+
+        val text = new Text();
+        text.textProperty().bind(
+                select(application.getOpenProject())
+                        .select(Project::getProjectTask)
+                        .selectObject(ProjectTask::getPrograms)
+                        .map(programs -> programs
+                                .stream()
+                                .map(Program::getData)
+                                .collect(Collectors.toList())
+                                .toString()
+                        )
+        );
+
+        contentBorderPane.topProperty().setValue(text);
 
         contentBorderPane.centerProperty().bind(contentView());
     }

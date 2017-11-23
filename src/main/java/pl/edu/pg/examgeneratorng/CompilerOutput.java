@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @Value
-class CompilerOutput {
+public class CompilerOutput {
     @NonNull
     List<String> diagnostics;
     @Nullable

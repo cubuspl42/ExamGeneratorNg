@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.toMap;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.joinLines;
 
-final class ProgramTemplateCompilation {
+public final class ProgramTemplateCompilation {
     static Map<ProgramId, Map<Group, CompilerOutput>> compileProgramTemplates(
             Map<ProgramId, ProgramTemplate> programTemplateMap,
             ExamMetadata examMetadata,
@@ -26,7 +26,7 @@ final class ProgramTemplateCompilation {
         }));
     }
 
-    private static Map<Group, CompilerOutput> compileProgramTemplate(
+    static Map<Group, CompilerOutput> compileProgramTemplate(
             ProgramId programId, ProgramTemplate programTemplate,
             ExamMetadata examMetadata,
             DiagnosticStream diagnosticStream
@@ -36,7 +36,7 @@ final class ProgramTemplateCompilation {
                         compileProgramTemplate(programId, programTemplate, group, diagnosticStream)));
     }
 
-    private static CompilerOutput compileProgramTemplate(
+    public static CompilerOutput compileProgramTemplate(
             ProgramId programId,
             ProgramTemplate programTemplate,
             Group group,

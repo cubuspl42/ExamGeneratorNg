@@ -141,7 +141,7 @@ public final class ExamGeneration {
                 });
     }
 
-    private static void generateExamVariantsForGroup(
+    public static void generateExamVariantsForGroup(
             Path workspacePath,
             Map<ProgramId, EvaluatedProgramTemplate> programTemplateMap,
             Group group

@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import static java.util.stream.Collectors.toMap;
 import static pl.edu.pg.examgeneratorng.util.StringUtils.joinLines;
 
-final class ProgramRunning {
+public final class ProgramRunning {
     static Map<ProgramId, Map<Group, ProcessOutput>> runPrograms(
             Map<ProgramId, Map<Group, CompilerOutput>> compilerOutputMap,
             DiagnosticStream diagnosticStream
@@ -33,5 +33,23 @@ final class ProgramRunning {
                     })
             );
         }));
+    }
+
+    public static ProcessOutput runProgram(
+            ProgramId programId,
+            CompilerOutput compilerOutput,
+            Group group,
+            DiagnosticStream diagnosticStream
+    ) {
+        val programProcessOutput = compilerOutput.getProgram().execute();
+        int exitCode = programProcessOutput.getStatus();
+        if (exitCode != 0) {
+            val message = "Program " + programId.getId() + " (group " + group.getIdentifier() + ")" +
+                    " finished with non-zero exit code " + exitCode;
+            diagnosticStream.writeDiagnostic(new Diagnostic(DiagnosticKind.ERROR, message));
+            return null;
+        } else {
+            return programProcessOutput;
+        }
     }
 }

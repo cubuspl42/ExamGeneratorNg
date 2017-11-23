@@ -5,6 +5,6 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-class ProgramTemplate {
+public class ProgramTemplate {
     private List<LineTemplate> lineTemplates;
 }

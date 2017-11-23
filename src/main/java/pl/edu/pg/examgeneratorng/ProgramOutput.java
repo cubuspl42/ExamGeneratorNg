@@ -6,13 +6,13 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-class ProgramOutput {
+public class ProgramOutput {
     @NonNull
     private List<String> standardOutput;
     @NonNull
     private List<String> errorOutput;
 
-    ProgramOutput(ProcessOutput processOutput){
+    public ProgramOutput(ProcessOutput processOutput){
 
         standardOutput = processOutput.getStandardOutput();
         errorOutput = processOutput.getErrorOutput();

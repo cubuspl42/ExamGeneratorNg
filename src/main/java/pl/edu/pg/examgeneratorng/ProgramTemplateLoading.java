@@ -8,10 +8,10 @@ import java.util.Map;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateParsing.parseProgramTemplate;
 import static pl.edu.pg.examgeneratorng.util.FileUtils.readWholeFile;
 
-final class ProgramTemplateLoading {
+public final class ProgramTemplateLoading {
     private static final int MAX_CODE_TEMPLATES_COUNT = 20;
 
-    static Map<ProgramId, ProgramTemplate> loadProgramTemplates(Path workspacePath) {
+    public static Map<ProgramId, ProgramTemplate> loadProgramTemplates(Path workspacePath) {
         Map<ProgramId, ProgramTemplate> programTemplates = new HashMap<>();
         for (int i = 0; i < MAX_CODE_TEMPLATES_COUNT; ++i) {
             ProgramId programId = ProgramId.fromIndex(i);

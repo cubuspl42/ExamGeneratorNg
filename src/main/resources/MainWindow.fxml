@@ -15,18 +15,19 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pg.examgeneratorng.ui.MainWindowController">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pl.edu.pg.examgeneratorng.ui.MainWindowController">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onFileOpen" text="Open project..." />
+                        <MenuItem mnemonicParsing="false" onAction="#onFileOpen" text="Open project..."/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
+                        <MenuItem mnemonicParsing="false" text="About"/>
                     </items>
                 </Menu>
             </menus>
@@ -37,58 +38,64 @@
             <children>
                 <HBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0">
                     <children>
-                        <Button fx:id="generateButton" mnemonicParsing="false" onAction="#onGeneratePressed" prefHeight="Infinity" text="Generate" />
-                        <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: #9e9e9e; -fx-background-color: #eaeaea; -fx-background-radius: 4; -fx-border-radius: 4;" styleClass="statusBox" HBox.hgrow="ALWAYS">
+                        <Button fx:id="generateButton" mnemonicParsing="false" onAction="#onGeneratePressed"
+                                prefHeight="Infinity" text="Generate"/>
+                        <VBox prefHeight="200.0" prefWidth="100.0"
+                              style="-fx-border-color: #9e9e9e; -fx-background-color: #eaeaea; -fx-background-radius: 4; -fx-border-radius: 4;"
+                              styleClass="statusBox" HBox.hgrow="ALWAYS">
                             <children>
                                 <VBox>
                                     <children>
                                         <BorderPane prefHeight="200.0" prefWidth="200.0">
                                             <VBox.margin>
-                                                <Insets />
+                                                <Insets/>
                                             </VBox.margin>
                                             <center>
                                                 <TextFlow textAlignment="CENTER" BorderPane.alignment="CENTER">
                                                     <children>
-                                                        <Text style="-fx-font-weight: bold;" text="Status: " />
-                                                        <Text fx:id="statusText" text="STATUS" />
+                                                        <Text style="-fx-font-weight: bold;" text="Status: "/>
+                                                        <Text fx:id="statusText" text="STATUS"/>
                                                     </children>
                                                     <BorderPane.margin>
-                                                        <Insets top="4.0" />
+                                                        <Insets top="4.0"/>
                                                     </BorderPane.margin>
                                                 </TextFlow>
                                             </center>
                                         </BorderPane>
                                         <GridPane fx:id="progressGridPane">
                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" />
+                                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES"/>
                                             </columnConstraints>
                                             <rowConstraints>
-                                                <RowConstraints />
+                                                <RowConstraints/>
                                             </rowConstraints>
                                             <children>
-                                                <VBox style="-fx-border-color: BLUE; -fx-border-style: hidden hidden solid hidden; -fx-border-width: 2;" />
+                                                <VBox style="-fx-border-color: BLUE; -fx-border-style: hidden hidden solid hidden; -fx-border-width: 2;"/>
                                             </children>
                                         </GridPane>
                                     </children>
                                 </VBox>
                             </children>
                             <HBox.margin>
-                                <Insets left="4.0" />
+                                <Insets left="4.0"/>
                             </HBox.margin>
                         </VBox>
                     </children>
                     <padding>
-                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
                     </padding>
                     <VBox.margin>
-                        <Insets />
+                        <Insets/>
                     </VBox.margin>
                 </HBox>
                 <BorderPane fx:id="contentBorderPane" VBox.vgrow="ALWAYS">
                     <center>
-                        <ListView BorderPane.alignment="CENTER" />
+                        <ListView BorderPane.alignment="CENTER"/>
                     </center>
+                    <top>
+                        <VBox fx:id="programsVbox" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER"/>
+                    </top>
                 </BorderPane>
             </children>
         </VBox>

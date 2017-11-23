@@ -6,7 +6,7 @@ import lombok.Value;
 import java.util.regex.Pattern;
 
 @Value
-class Group {
+public class Group {
     public static final Group A = new Group(0);
     public static final Group B = new Group(1);
 
