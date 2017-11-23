@@ -3,6 +3,7 @@ package pl.edu.pg.examgeneratorng.ui.model;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.beans.value.ObservableValue;
@@ -11,6 +12,8 @@ import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.Value;
 import lombok.val;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.fxmisc.easybind.EasyBind;
 import org.lucidfox.jpromises.Promise;
 import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.ThrowingSupplier;
@@ -21,10 +24,13 @@ import pl.edu.pg.examgeneratorng.ui.util.PromiseUtils;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
 import static pl.edu.pg.examgeneratorng.ExamGeneration.generateExamVariantsForGroup;
 import static pl.edu.pg.examgeneratorng.ProgramRunning.runProgram;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateCompilation.compileProgramTemplate;
@@ -174,12 +180,15 @@ public class ProjectTask {
     }
 
     public ObservableValue<State> getState() {
-        return new SimpleObjectProperty<>(State.RUNNING);
+        return EasyBind.monadic(getProgress())
+                .map(progress -> progress.doubleValue() == 1.0 ? State.SUCCEEDED : State.RUNNING);
     }
 
     public ObservableValue<List<Program>> getPrograms() {
         return promiseToMonadic(pipeline.programPipelineMap)
-                .map(programPipelineMap -> programPipelineMap.entrySet().stream().map(entry -> {
+                .map(programPipelineMap -> programPipelineMap.entrySet().stream()
+                        .sorted(comparing(e -> e.getKey().getId()))
+                        .map(entry -> {
                             val programId = entry.getKey();
                             val programPipeline = entry.getValue();
 

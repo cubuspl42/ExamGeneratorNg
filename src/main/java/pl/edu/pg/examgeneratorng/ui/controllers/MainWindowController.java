@@ -95,12 +95,13 @@ public class MainWindowController {
                 .selectObject(ProjectTask::getPrograms)
                 .map(FXCollections::observableArrayList);
 
-        contentBorderPane.topProperty().bind(programs.map(programs1 -> tabPane(
-                map(programs1, program -> new Tab(
-                        program.getProgramId().toString(),
-                        programView(program)
-                ))
-        )));
+        contentBorderPane.topProperty().bind(programs
+                .map(programs1 -> tabPane(
+                        map(programs1, program -> new Tab(
+                                "Program #" + String.format("%02d", program.getProgramId().getId()),
+                                programView(program)
+                        ))
+                )));
 
         contentBorderPane.centerProperty().bind(contentView());
     }

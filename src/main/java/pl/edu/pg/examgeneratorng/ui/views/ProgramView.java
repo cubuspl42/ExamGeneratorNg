@@ -24,7 +24,7 @@ public class ProgramView {
                 observableArrayList(program.getGroupPrograms().entrySet().stream().map(entry -> {
                     val group = entry.getKey();
                     val groupProgram = entry.getValue();
-                    return new Tab(group.toString(), groupProgramView(groupProgram));
+                    return new Tab("Group " + group.getIdentifier(), groupProgramView(groupProgram));
                 }).collect(Collectors.toList()))
         );
     }
