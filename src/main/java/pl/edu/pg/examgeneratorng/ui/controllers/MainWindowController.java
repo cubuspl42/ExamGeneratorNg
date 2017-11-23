@@ -18,29 +18,23 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import lombok.val;
 import org.fxmisc.easybind.EasyBind;
 import pl.edu.pg.examgeneratorng.Diagnostic;
-import pl.edu.pg.examgeneratorng.Group;
-import pl.edu.pg.examgeneratorng.ProgramVariant;
 import pl.edu.pg.examgeneratorng.ui.model.Application;
-import pl.edu.pg.examgeneratorng.ui.model.Program;
+import pl.edu.pg.examgeneratorng.ui.model.GroupProgram;
 import pl.edu.pg.examgeneratorng.ui.model.Project;
 import pl.edu.pg.examgeneratorng.ui.model.ProjectTask;
-import pl.edu.pg.examgeneratorng.ui.model.ProjectTask.State;
-import pl.edu.pg.examgeneratorng.util.StringUtils;
 
 import java.io.File;
-import java.util.stream.Collectors;
 
+import static org.fxmisc.easybind.EasyBind.map;
 import static org.fxmisc.easybind.EasyBind.monadic;
 import static org.fxmisc.easybind.EasyBind.select;
-import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
 import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindButtonEnabled;
-import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindChildren;
-import static pl.edu.pg.examgeneratorng.ui.util.JavaFXUtils.group;
 import static pl.edu.pg.examgeneratorng.ui.util.JavaFXUtils.tabPane;
+import static pl.edu.pg.examgeneratorng.ui.views.GroupProgramView.groupProgramView;
+import static pl.edu.pg.examgeneratorng.ui.views.ProgramView.programView;
 
 public class MainWindowController {
     @FXML
@@ -102,20 +96,13 @@ public class MainWindowController {
                 .map(FXCollections::observableArrayList);
 
         contentBorderPane.topProperty().bind(programs.map(programs1 -> tabPane(
-                EasyBind.map(programs1, program -> new Tab(
+                map(programs1, program -> new Tab(
                         program.getProgramId().toString(),
                         programView(program)
                 ))
         )));
 
         contentBorderPane.centerProperty().bind(contentView());
-    }
-
-    private Node programView(Program program) {
-        val x = realizeProgramTemplate(program.getProgramTemplate(), ProgramVariant.COMPILER, Group.A);
-        return new Text(
-                StringUtils.joinLines(x.getLines())
-        );
     }
 
     private ObservableValue<Node> contentView() {

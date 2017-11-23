@@ -33,8 +33,10 @@ import static pl.edu.pg.examgeneratorng.ExamGeneration.generateExamVariantsForGr
 import static pl.edu.pg.examgeneratorng.ProgramRunning.runProgram;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateCompilation.compileProgramTemplate;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateLoading.loadProgramTemplates;
+import static pl.edu.pg.examgeneratorng.ProgramTemplateRealization.realizeProgramTemplate;
 import static pl.edu.pg.examgeneratorng.ui.util.PromiseUtils.promiseToMonadic;
 import static pl.edu.pg.examgeneratorng.util.MapUtils.*;
+import static pl.edu.pg.examgeneratorng.util.StringUtils.joinLines;
 
 public class ProjectTask {
 
@@ -173,16 +175,39 @@ public class ProjectTask {
     public ObservableValue<List<Program>> getPrograms() {
         return promiseToMonadic(pipeline)
                 .map(pipeline ->
-                pipeline.programPipelineMap.entrySet().stream().map(entry -> {
-                    val programId = entry.getKey();
-                    val programPipeline = entry.getValue();
-                    return new Program(
-                            programId,
-                            programPipeline.programTemplate,
-                            new SimpleObjectProperty<String>(programPipeline.toString())
-                    );
-                }).collect(Collectors.toList())
-        ).orElse(Collections.emptyList());
+                        pipeline.programPipelineMap.entrySet().stream().map(entry -> {
+                            val programId = entry.getKey();
+                            val programPipeline = entry.getValue();
+
+                            return new Program(
+                                    programId,
+                                    mapMapByEntry(programPipeline.groupPipelineMap, entry1 -> {
+                                        val group = entry1.getKey();
+                                        val groupPipeline = entry1.getValue();
+
+                                        val realizedProgramTemplate = realizeProgramTemplate(
+                                                programPipeline.programTemplate, ProgramVariant.COMPILER, group );
+
+                                        ObservableValue<String> stdout = promiseToMonadic(groupPipeline.processOutput)
+                                                .map(y -> joinLines(y.getStandardOutput()))
+                                                .orElse("");
+
+                                        ObservableValue<String> stderr = promiseToMonadic(groupPipeline.processOutput)
+                                                .map(y -> joinLines(y.getErrorOutput()))
+                                                .orElse("");
+
+                                        return new GroupProgram(
+                                                programId,
+                                                programPipeline.programTemplate,
+                                                joinLines(realizedProgramTemplate.getLines()),
+                                                stdout,
+                                                stderr,
+                                                new SimpleObjectProperty<>(programPipeline.toString())
+                                        );
+                                    })
+                            );
+                        }).collect(Collectors.toList())
+                ).orElse(Collections.emptyList());
     }
 
     private Task<Void> createTask() {

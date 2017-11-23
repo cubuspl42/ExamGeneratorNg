@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pl.edu.pg.examgeneratorng.ui.controllers.ProgramTabController">
+    <center>
+        <VBox>
+            <children>
+                <Text text="Source code">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Text>
+                <Text fx:id="programTemplateText" text="{PROGRAM TEMPLATE}"/>
+                <Text text="Standard output">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Text>
+                <Text fx:id="standardOutputText" text="{STDOUT}"/>
+                <Text text="Standard error">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Text>
+                <Text fx:id="standardErrorText" text="{STDERR}"/>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

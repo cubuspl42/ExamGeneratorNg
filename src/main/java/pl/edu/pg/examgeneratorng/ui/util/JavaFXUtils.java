@@ -19,7 +19,7 @@ import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindChildren;
 
 public final class JavaFXUtils {
     public static <TController> ControlledNode<TController> loadFxml(
-            Class<? extends Main> aClass, String name
+            Class<?> aClass, String name
     ) {
         FXMLLoader fxmlLoader = new FXMLLoader(aClass.getResource(name));
         try {
