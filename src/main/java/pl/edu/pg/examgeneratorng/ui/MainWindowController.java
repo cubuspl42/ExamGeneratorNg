@@ -2,6 +2,7 @@ package pl.edu.pg.examgeneratorng.ui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -18,6 +20,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import lombok.val;
+import org.fxmisc.easybind.EasyBind;
 import pl.edu.pg.examgeneratorng.Diagnostic;
 import pl.edu.pg.examgeneratorng.ui.model.Application;
 import pl.edu.pg.examgeneratorng.ui.model.Program;
@@ -34,6 +37,7 @@ import static org.fxmisc.easybind.EasyBind.select;
 import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindButtonEnabled;
 import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindChildren;
 import static pl.edu.pg.examgeneratorng.ui.util.JavaFXUtils.group;
+import static pl.edu.pg.examgeneratorng.ui.util.JavaFXUtils.tabPane;
 
 public class MainWindowController {
     @FXML
@@ -89,20 +93,14 @@ public class MainWindowController {
                         .orElse(0.0)
         );
 
-        val text = new Text();
-        text.textProperty().bind(
-                select(application.getOpenProject())
-                        .select(Project::getProjectTask)
-                        .selectObject(ProjectTask::getPrograms)
-                        .map(programs -> programs
-                                .stream()
-                                .map(Program::getData)
-                                .collect(Collectors.toList())
-                                .toString()
-                        )
-        );
+        val programs = select(application.getOpenProject())
+                .select(Project::getProjectTask)
+                .selectObject(ProjectTask::getPrograms)
+                .map(FXCollections::observableArrayList);
 
-        contentBorderPane.topProperty().setValue(text);
+        contentBorderPane.topProperty().bind(programs.map(programs1 -> tabPane(
+                EasyBind.map(programs1, program -> new Tab(program.getProgramId().toString()))
+        )));
 
         contentBorderPane.centerProperty().bind(contentView());
     }

@@ -173,9 +173,14 @@ public class ProjectTask {
     public ObservableValue<List<Program>> getPrograms() {
         return promiseToMonadic(pipeline)
                 .map(pipeline ->
-                pipeline.programPipelineMap.values().stream().map(w -> new Program(
-                        new SimpleObjectProperty<String>(w.toString())
-                )).collect(Collectors.toList())
+                pipeline.programPipelineMap.entrySet().stream().map(entry -> {
+                    val programId = entry.getKey();
+                    val programPipeline = entry.getValue();
+                    return new Program(
+                            programId,
+                            new SimpleObjectProperty<String>(programPipeline.toString())
+                    );
+                }).collect(Collectors.toList())
         ).orElse(Collections.emptyList());
     }
 
