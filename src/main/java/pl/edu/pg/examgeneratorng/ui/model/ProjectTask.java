@@ -1,14 +1,13 @@
 package pl.edu.pg.examgeneratorng.ui.model;
 
 import com.google.common.collect.ImmutableMap;
-import javafx.beans.property.SimpleDoubleProperty;
+import com.google.common.collect.ImmutableSet;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableNumberValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
 import lombok.Getter;
 import lombok.Value;
 import lombok.val;
@@ -17,18 +16,15 @@ import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.ThrowingSupplier;
 import org.lucidfox.jpromises.javafx.JavaFXPromiseFactory;
 import pl.edu.pg.examgeneratorng.*;
+import pl.edu.pg.examgeneratorng.ui.util.PromiseContext;
 import pl.edu.pg.examgeneratorng.ui.util.PromiseUtils;
 
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
-import static javafx.application.Platform.runLater;
-import static pl.edu.pg.examgeneratorng.ExamGeneration.generateAllExamVariants;
 import static pl.edu.pg.examgeneratorng.ExamGeneration.generateExamVariantsForGroup;
 import static pl.edu.pg.examgeneratorng.ProgramRunning.runProgram;
 import static pl.edu.pg.examgeneratorng.ProgramTemplateCompilation.compileProgramTemplate;
@@ -40,10 +36,11 @@ import static pl.edu.pg.examgeneratorng.util.StringUtils.joinLines;
 
 public class ProjectTask {
 
+
     @Value
     private static class Pipeline {
-        private Map<ProgramId, ProgramPipeline> programPipelineMap;
-        private Map<Group, ExamPipeline> examPipelineMap;
+        private Promise<Map<ProgramId, ProgramPipeline>> programPipelineMap;
+        private Map<Group, Promise<ExamPipeline>> examPipelineMap;
     }
 
     @Value
@@ -74,36 +71,43 @@ public class ProjectTask {
 
     private final PromiseFactory promiseFactory = new JavaFXPromiseFactory();
 
-    private final ExecutorService executorService = new ForkJoinPool();
+    private final PromiseContext promiseContext = new PromiseContext(promiseFactory);
 
     @Getter
     private final ObservableList<Diagnostic> diagnostics = FXCollections.observableArrayList();
 
-    private final Promise<Pipeline> pipeline;
+    private final DiagnosticStream diagnosticStream = diagnostic ->
+            Platform.runLater(() -> diagnostics.add(diagnostic));
+
+    private final Pipeline pipeline;
 
     ProjectTask(Path workspacePath) {
         this.workspacePath = workspacePath;
 
-        Promise<Pipeline> pipeline = supplyAsync(() -> {
-            val programTemplates = loadProgramTemplates(workspacePath);
-
-            Map<ProgramId, ProgramPipeline> programPipelineMap = mapMapByEntry(
-                    programTemplates,
-                    entry -> programPipeline(entry.getKey(), entry.getValue())
-            );
-
-            Map<Group, ExamPipeline> examPipelineMap = ImmutableMap.of(
-                    Group.A, examPipeline(programPipelineMap, Group.A),
-                    Group.B, examPipeline(programPipelineMap, Group.B)
-            );
-
-            return new Pipeline(
-                    programPipelineMap,
-                    examPipelineMap
-            );
-        });
+        Pipeline pipeline = mainPipeline(workspacePath);
 
         this.pipeline = pipeline;
+    }
+
+    private Pipeline mainPipeline(Path workspacePath) {
+
+        val programTemplatesPromise = supplyAsync(() -> loadProgramTemplates(workspacePath));
+        Promise<Map<ProgramId, ProgramPipeline>> programPipeplinesPromise =
+                programTemplatesPromise.then(programTemplates -> promiseFactory.resolve(
+                        mapMapByEntry(programTemplates, entry -> {
+                            val programId = entry.getKey();
+                            val programTemplate = entry.getValue();
+                            return programPipeline(programId, programTemplate);
+                        }))
+                );
+
+        Map<Group, Promise<ExamPipeline>> examPipelines = mapToMap(ImmutableSet.of(Group.A, Group.B), group ->
+                programPipeplinesPromise.then(programPipelines ->
+                        promiseFactory.resolve(examPipeline(programPipelines, group))
+                )
+        );
+
+        return new Pipeline(programPipeplinesPromise, examPipelines);
     }
 
 
@@ -119,11 +123,11 @@ public class ProjectTask {
 
     private GroupPipeline groupPipeline(ProgramId programId, ProgramTemplate programTemplate, Group group) {
         Promise<CompilerOutput> compilerOutputPromise = supplyAsync(() ->
-                compileProgramTemplate(programId, programTemplate, group, diagnostics::add)
+                compileProgramTemplate(programId, programTemplate, group, diagnosticStream)
         );
 
         Promise<ProcessOutput> processOutput = compilerOutputPromise.then(compilerOutput -> supplyAsync(() ->
-                runProgram(programId, compilerOutput, group, diagnostics::add)));
+                runProgram(programId, compilerOutput, group, diagnosticStream)));
 
         return new GroupPipeline(
                 programTemplate,
@@ -161,11 +165,12 @@ public class ProjectTask {
     }
 
     private <T> Promise<T> supplyAsync(ThrowingSupplier<? extends T> supplier) {
-        return promiseFactory.supplyAsync(supplier, executorService::submit);
+        Promise<T> promise = promiseContext.supplyAsync(supplier);
+        return promise;
     }
 
-    public ObservableDoubleValue getProgress() {
-        return new SimpleDoubleProperty(0.5);
+    public ObservableNumberValue getProgress() {
+        return promiseContext.getProgress();
     }
 
     public ObservableValue<State> getState() {
@@ -173,9 +178,8 @@ public class ProjectTask {
     }
 
     public ObservableValue<List<Program>> getPrograms() {
-        return promiseToMonadic(pipeline)
-                .map(pipeline ->
-                        pipeline.programPipelineMap.entrySet().stream().map(entry -> {
+        return promiseToMonadic(pipeline.programPipelineMap)
+                .map(programPipelineMap -> programPipelineMap.entrySet().stream().map(entry -> {
                             val programId = entry.getKey();
                             val programPipeline = entry.getValue();
 
@@ -186,7 +190,7 @@ public class ProjectTask {
                                         val groupPipeline = entry1.getValue();
 
                                         val realizedProgramTemplate = realizeProgramTemplate(
-                                                programPipeline.programTemplate, ProgramVariant.COMPILER, group );
+                                                programPipeline.programTemplate, ProgramVariant.COMPILER, group);
 
                                         ObservableValue<String> stdout = promiseToMonadic(groupPipeline.processOutput)
                                                 .map(y -> joinLines(y.getStandardOutput()))
@@ -208,50 +212,5 @@ public class ProjectTask {
                             );
                         }).collect(Collectors.toList())
                 ).orElse(Collections.emptyList());
-    }
-
-    private Task<Void> createTask() {
-        Task<Void> task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                updateProgress(0, 1);
-
-                try {
-                    generateAllExamVariants(workspacePath, diagnostic -> pushDiagnostic(diagnostic));
-                } catch (Exception e) {
-                    pushDiagnostic(new Diagnostic(DiagnosticKind.ERROR, e.toString()));
-                    throw e;
-                }
-
-                pushDiagnostic(new Diagnostic(DiagnosticKind.INFO, "Exam generated successfully"));
-
-                updateProgress(1, 1);
-
-                return null;
-            }
-        };
-        new Thread(task).start();
-        return task;
-    }
-
-    private void pushDiagnostic(Diagnostic diagnostic) {
-        runLater(() -> diagnostics.add(diagnostic));
-    }
-
-    private static State mapState(Worker.State state) {
-        switch (state) {
-            case READY:
-                return State.RUNNING;
-            case SCHEDULED:
-                return State.RUNNING;
-            case RUNNING:
-                return State.RUNNING;
-            case SUCCEEDED:
-                return State.SUCCEEDED;
-            case FAILED:
-                return State.FAILED;
-            default:
-                throw new AssertionError();
-        }
     }
 }
