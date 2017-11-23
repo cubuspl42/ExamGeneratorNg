@@ -178,6 +178,7 @@ public class ProjectTask {
                     val programPipeline = entry.getValue();
                     return new Program(
                             programId,
+                            programPipeline.programTemplate,
                             new SimpleObjectProperty<String>(programPipeline.toString())
                     );
                 }).collect(Collectors.toList())

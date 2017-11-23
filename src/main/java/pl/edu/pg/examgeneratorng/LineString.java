@@ -7,7 +7,7 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-class LineString {
+public class LineString {
     private List<String> lines;
 
     int longestLineLength() {

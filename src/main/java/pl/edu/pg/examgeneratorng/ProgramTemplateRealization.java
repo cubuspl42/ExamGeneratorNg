@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 import static pl.edu.pg.examgeneratorng.util.StringUtils.nCopiesOfChar;
 
-final class ProgramTemplateRealization {
-    static LineString realizeProgramTemplate(
+public final class ProgramTemplateRealization {
+    public static LineString realizeProgramTemplate(
             ProgramTemplate programTemplate, ProgramVariant variant, Group group) {
         List<String> lines = programTemplate.getLineTemplates().stream()
                 .map(lineTemplate -> realizeLineTemplate(lineTemplate, variant, group))
