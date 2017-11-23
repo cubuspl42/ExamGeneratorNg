@@ -12,6 +12,7 @@ import org.fxmisc.easybind.EasyBind;
 import pl.edu.pg.examgeneratorng.ui.Main;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static org.fxmisc.easybind.EasyBind.listBind;
 import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindChildren;
@@ -19,11 +20,15 @@ import static pl.edu.pg.examgeneratorng.ui.util.BindingUtils.bindChildren;
 public final class JavaFXUtils {
     public static <TController> ControlledNode<TController> loadFxml(
             Class<? extends Main> aClass, String name
-    ) throws IOException {
+    ) {
         FXMLLoader fxmlLoader = new FXMLLoader(aClass.getResource(name));
-        Parent root = fxmlLoader.load();
-        TController controller = fxmlLoader.getController();
-        return new ControlledNode<>(root, controller);
+        try {
+            Parent root = fxmlLoader.load();
+            TController controller = fxmlLoader.getController();
+            return new ControlledNode<>(root, controller);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public static Group group(ObservableValue<Node> singleChild) {

@@ -1,4 +1,4 @@
-package pl.edu.pg.examgeneratorng.ui;
+package pl.edu.pg.examgeneratorng.ui.controllers;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
@@ -62,7 +62,7 @@ public class MainWindowController {
 
     private Stage stage;
 
-    void initialize(Application application, Stage stage) {
+    public void initialize(Application application, Stage stage) {
         this.application = application;
         this.stage = stage;
 
