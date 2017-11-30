@@ -33,7 +33,24 @@
                                     <mainClass>pl.edu.pg.examgeneratorng.ui.Main</mainClass>
                                 </transformer>
                             </transformers>
+                            <finalName>ExamGenerator</finalName>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptor>${project.basedir}/assembly.xml</descriptor>
+                    <finalName>ExamGenerator</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
