@@ -12,5 +12,4 @@ public class GroupProgram {
     private String sourceCode;
     private ObservableValue<String> stdout;
     private ObservableValue<String> stderr;
-    private ObservableValue<String> data;
 }

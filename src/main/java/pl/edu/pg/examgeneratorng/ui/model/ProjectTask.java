@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -12,8 +11,6 @@ import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.Value;
 import lombok.val;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.fxmisc.easybind.EasyBind;
 import org.lucidfox.jpromises.Promise;
 import org.lucidfox.jpromises.PromiseFactory;
 import org.lucidfox.jpromises.core.ThrowingSupplier;
@@ -23,13 +20,11 @@ import pl.edu.pg.examgeneratorng.ui.util.PromiseContext;
 import pl.edu.pg.examgeneratorng.ui.util.PromiseUtils;
 
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static org.fxmisc.easybind.EasyBind.monadic;
 import static pl.edu.pg.examgeneratorng.ExamGeneration.generateExamVariantsForGroup;
@@ -194,35 +189,52 @@ public class ProjectTask {
                         .map(entry -> {
                             val programId = entry.getKey();
                             val programPipeline = entry.getValue();
+                            return buildProgram(programId, programPipeline);
+                        })
+                        .collect(Collectors.toList())
+                )
+                .orElse(emptyList());
+    }
 
-                            return new Program(
-                                    programId,
-                                    mapMapByEntry(programPipeline.groupPipelineMap, entry1 -> {
-                                        val group = entry1.getKey();
-                                        val groupPipeline = entry1.getValue();
+    private Program buildProgram(ProgramId programId, ProgramPipeline programPipeline) {
+        return new Program(
+                programId,
+                mapMapByEntry(programPipeline.groupPipelineMap, entry -> {
+                    val group = entry.getKey();
+                    val groupPipeline = entry.getValue();
+                    return buildGroupProgram(
+                            programId,
+                            programPipeline.programTemplate,
+                            group,
+                            groupPipeline.processOutput
+                    );
+                })
+        );
+    }
 
-                                        val realizedProgramTemplate = realizeProgramTemplate(
-                                                programPipeline.programTemplate, ProgramVariant.COMPILER, group);
+    private GroupProgram buildGroupProgram(
+            ProgramId programId,
+            ProgramTemplate programTemplate,
+            Group group,
+            Promise<ProcessOutput> processOutput
+    ) {
+        val realizedProgramTemplate = realizeProgramTemplate(
+                programTemplate, ProgramVariant.COMPILER, group);
 
-                                        ObservableValue<String> stdout = promiseToMonadic(groupPipeline.processOutput)
-                                                .map(y -> joinLines(y.getStandardOutput()))
-                                                .orElse("");
+        ObservableValue<String> stdout = promiseToMonadic(processOutput)
+                .map(y -> joinLines(y.getStandardOutput()))
+                .orElse("");
 
-                                        ObservableValue<String> stderr = promiseToMonadic(groupPipeline.processOutput)
-                                                .map(y -> joinLines(y.getErrorOutput()))
-                                                .orElse("");
+        ObservableValue<String> stderr = promiseToMonadic(processOutput)
+                .map(y -> joinLines(y.getErrorOutput()))
+                .orElse("");
 
-                                        return new GroupProgram(
-                                                programId,
-                                                programPipeline.programTemplate,
-                                                joinLines(realizedProgramTemplate.getLines()),
-                                                stdout,
-                                                stderr,
-                                                new SimpleObjectProperty<>(programPipeline.toString())
-                                        );
-                                    })
-                            );
-                        }).collect(Collectors.toList())
-                ).orElse(Collections.emptyList());
+        return new GroupProgram(
+                programId,
+                programTemplate,
+                joinLines(realizedProgramTemplate.getLines()),
+                stdout,
+                stderr
+        );
     }
 }
