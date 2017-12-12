@@ -6,8 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -18,13 +21,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.val;
 import org.fxmisc.easybind.EasyBind;
 import pl.edu.pg.examgeneratorng.Diagnostic;
+import pl.edu.pg.examgeneratorng.ui.About;
 import pl.edu.pg.examgeneratorng.ui.model.Application;
 import pl.edu.pg.examgeneratorng.ui.model.GroupProgram;
 import pl.edu.pg.examgeneratorng.ui.model.Project;
 import pl.edu.pg.examgeneratorng.ui.model.ProjectTask;
+import pl.edu.pg.examgeneratorng.ui.views.AboutWindowView;
+import pl.edu.pg.examgeneratorng.ui.views.MainWindowView;
 
 import java.io.File;
 
@@ -148,5 +155,11 @@ public class MainWindowController {
         if (file != null) {
             application.openProject(file.toPath());
         }
+    }
+
+    @FXML
+    private void onAboutOpen() throws Exception{
+
+        new About().startWithParent(stage);
     }
 }
